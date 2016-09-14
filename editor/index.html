@@ -269,49 +269,49 @@ nav {
             this.themeCycle = true;
         };
         $scope.editor = new editor();
-        var gui = new dat.GUI();
-        var opacityCtrl = gui.add($scope.editor, 'opacity', 0, 100);
-        opacityCtrl.onChange(function (value) {
-            $scope.$apply();
-        });
-        var themeCycle = gui.add($scope.editor, 'themeCycle', true);
-        themeCycle.onChange(function (value) {
-            $scope.$apply();
-        });
-        var themeController = gui.add($scope.editor, 'theme', themes).listen();
-        themeController.onChange(function (value) {
-            $scope.$apply();
-        });
-        var modeController = gui.add($scope.editor, 'mode', modes);
-        modeController.onChange(function (value) {
-            $scope.$apply();
-        });
-        var useWrapModeCtrl = gui.add($scope.editor, 'useWrapMode', true);
-        useWrapModeCtrl.onChange(function (value) {
-            $scope.$apply();
-        });
-        var gutterCtrl = gui.add($scope.editor, 'gutter', false);
-        gutterCtrl.onChange(function (value) {
-            $scope.$apply();
-        });
-        var splitMode = gui.add($scope.editor, 'splitMode', false);
-        splitMode.onChange(function (value) {
-            $scope.$apply();
-        });
-        var themeCycle = function () {
-            $timeout(function () {
-                if ($scope.editor.themeCycle) {
-                    $scope.currentTheme = $scope.currentTheme + 1;
-                    if ($scope.currentTheme < themes.length) {
-                        $scope.editor.theme = themes[$scope.currentTheme];
-                    } else {
-                        $scope.currentTheme = 0;
-                        $scope.editor.theme = themes[$scope.currentTheme];
-                    }
-                }
-                themeCycle();
-            }, 500);
-        };
+//        var gui = new dat.GUI();
+//        var opacityCtrl = gui.add($scope.editor, 'opacity', 0, 100);
+//        opacityCtrl.onChange(function (value) {
+//            $scope.$apply();
+//        });
+//        var themeCycle = gui.add($scope.editor, 'themeCycle', true);
+//        themeCycle.onChange(function (value) {
+//            $scope.$apply();
+//        });
+//        var themeController = gui.add($scope.editor, 'theme', themes).listen();
+//        themeController.onChange(function (value) {
+//            $scope.$apply();
+//        });
+//        var modeController = gui.add($scope.editor, 'mode', modes);
+//        modeController.onChange(function (value) {
+//            $scope.$apply();
+//        });
+//        var useWrapModeCtrl = gui.add($scope.editor, 'useWrapMode', true);
+//        useWrapModeCtrl.onChange(function (value) {
+//            $scope.$apply();
+//        });
+//        var gutterCtrl = gui.add($scope.editor, 'gutter', false);
+//        gutterCtrl.onChange(function (value) {
+//            $scope.$apply();
+//        });
+//        var splitMode = gui.add($scope.editor, 'splitMode', false);
+//        splitMode.onChange(function (value) {
+//            $scope.$apply();
+//        });
+//        var themeCycle = function () {
+//            $timeout(function () {
+//                if ($scope.editor.themeCycle) {
+//                    $scope.currentTheme = $scope.currentTheme + 1;
+//                    if ($scope.currentTheme < themes.length) {
+//                        $scope.editor.theme = themes[$scope.currentTheme];
+//                    } else {
+//                        $scope.currentTheme = 0;
+//                        $scope.editor.theme = themes[$scope.currentTheme];
+//                    }
+//                }
+//                themeCycle();
+//            }, 500);
+//        };
     }
 ]);
 </script>
