@@ -39,7 +39,7 @@ p{
     <div class="">
     <div class="row">
     <div class="col-md-8">
-        <br>
+    <br>
     <h1>{{wormHole.lo}} {{wormHole.op}} {{wormHole.ro}}</h1>
     <div class="row">
     <div class="col-md-3">
@@ -52,6 +52,7 @@ p{
     </div>
         
     </div>
+<!--       total score     -->
     <div class="row">
         <h2>Score: {{Hiscore}}</h2>
     </div>
@@ -59,7 +60,7 @@ p{
         
         
     <div class="col-md-4" style="height: 100%; overflow-y: scroll">
-        
+<!--    repeating game history here   ng-class for changing colors here _ -->
         <div ng-repeat="data in history" ng-class="data.formalresult==true?'greenc': 'redc'">
             <h3 style="margin: 0; padding: 5px; color: white; text-align: left">Ques: {{data.lo}}&nbsp;{{data.op}}&nbsp;{{data.ro}} - Score: {{data.score}}</h3>
             <p style="margin-bottom: 0; padding: 5px; text-align:left; color: white">{{data.timeStamp._d}}</p>
@@ -72,6 +73,8 @@ p{
 var hod = angular.module('mod', []);
 hod.controller('nCtrl', function ( $scope ) {
 
+    
+// wormHole is wrapper for current question numbers, operator and result, totalscore, calculated value, and timestamp, all this will push to history to view in DOM. 
 $scope.wormHole = {
 lo : '',
 op : '',
@@ -81,15 +84,19 @@ score: 0,
 formalresult: '',
 timeStamp: '',
 }    
-
+//for hostory DOM
 $scope.history = [];
+    
+//The Incemental/Decremental Value through out the game, this is global
 $scope.Hiscore = 0;
 
+// whether user entered enter key or not
 $scope.myFunct = function(keyEvent) {
   if (keyEvent.which === 13)
-    $scope.checkCalculation()
+    $scope.checkCalculation()  // then calculate the user answer
 }
 
+//generate random numbers author: vamsi
 $scope.randomNumbers = function(){
 a = Math.floor(Math.random() * (4 - 1 + 1) + 1);
 b = Math.floor(Math.random() * (4 - 1 + 1) + 1);
@@ -97,6 +104,7 @@ return $scope.randomOperation(a,b);
 }
 
 
+//generate random opcode author: vamsi
 $scope.randomOperation = function(a, b){
 randInt = Math.floor(Math.random() * (4 - 1 + 1) + 1);
 switch(randInt){
@@ -126,13 +134,14 @@ score: 0,
 formalresult: ''
 } 
 
-    
+//assigning current game values for wormHole
 $scope.wormHole.lo = a;
 $scope.wormHole.op = op;
 $scope.wormHole.ro = b;
 $scope.wormHole.result = result;
-}
 
+}
+//checking user asnwer author: vamsi
 $scope.checkCalculation = function(){
 if($scope.domresult == $scope.wormHole.result){
 $scope.updateScore('+');
@@ -145,7 +154,7 @@ $scope.wormHole.formalresult = false;
 
 
 }
-
+//update user asnwer author: vamsi
 $scope.updateScore=function(q){
 if (q=='+') {
 $scope.Hiscore += 1;
@@ -158,23 +167,16 @@ this.randomNumbers();
 else{
 this.randomNumbers();
 }
-    
+//assigning post answer values to wormhole to display in DOM
 $scope.wormHole.score = $scope.Hiscore;
 $scope.wormHole.timeStamp = moment();
+//pushing data to history
 $scope.history.push($scope.wormHole)
-$scope.domresult = '';
-console.log($scope.history)
+$scope.domresult = ''; //clearing input dom
+
 }
 
-    
-    
-$scope.randomNumbers()
-
-    
-
-    
-
-
+$scope.randomNumbers() // here im kick starting the bike  zzzzzzzzzzzzzzzzzzzz
 
 });
     
