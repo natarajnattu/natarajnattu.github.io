@@ -39,6 +39,7 @@ p{
     <div class="">
     <div class="row">
     <div class="col-md-8">
+        <h1>Hello {{gameVariables.name}}</h1>
     <br>
     <h1>{{wormHole.lo}} {{wormHole.op}} {{wormHole.ro}}</h1>
     <div class="row">
@@ -68,12 +69,74 @@ p{
     </div>
     </div>
     </div>
+    
+<!-- Modal -->
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" style="border-radius: 0; padding: 10px">
+        <div class="row">
+        <div class="col-md-12">
+        <p  style="text-align: left;">Name</p>
+        <input type="text" class="form-control" style="width: 250px;" ng-model="gameVariables.name">
+        </div>
+        </div>
+        <br>
+        <div class="row">
+        <div class="col-md-12">
+        <h3>Select Difficuilty</h3>
+        <div style="text-align: center">
+        <label class="checkbox-inline" ng-repeat="data in Cuoperators"><input type="checkbox" ng-model="selectables[data.value]" value="data.value">{{data.operator}}</label>
+        </div>
+        
+        <div class="row">
+        <div style="text-align: center" class="col-md-12">
+            <p style="text-align: left;"><small style="color: #888">Enter a value</small></p>
+            <input type="text" class="form-control" style="width: 250px;" ng-model="gameVariables.startingvalue" />
+        </div>    
+        </div>
+            <br>    
+        <div class="row">
+        <div style="text-align: center" class="col-md-12">
+            <p style="text-align: left;"><small style="color: #888">Enter b value</small></p>
+            <input type="text" class="form-control" style="width: 250px;" ng-model="gameVariables.endingvalue" />
+        </div>    
+        </div>
+            <br>    
+        <div class="row">
+        <div style="text-align: center" class="col-md-12">
+            <p style="text-align: left;"><small style="color: #888">Let's get started</small></p>
+            <button class="btn btn-default" ng-click="setGameVariables()">Ready set GO!</button>
+        </div>    
+        </div>
+            
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+    
 </body>
 <script>
 var hod = angular.module('mod', []);
 hod.controller('nCtrl', function ( $scope ) {
+$(".modal").modal('show')
+//selected checkbox value wrapper
+$scope.selectables = {};
+//game variables initilization - learning from user inputs
+$scope.gameVariables={
+    name: '',
+    oprators: [],
+    startingvalue: null,
+    endingvalue: null,
+}
+//dynamic oprator list
+$scope.Cuoperators = [
+    {operator: "+", value: 1},
+    {operator: "-", value: 2},
+    {operator: "x", value: 3},
+    {operator: "%", value: 4},
+]
 
-    
 // wormHole is wrapper for current question numbers, operator and result, totalscore, calculated value, and timestamp, all this will push to history to view in DOM. 
 $scope.wormHole = {
 lo : '',
@@ -96,18 +159,20 @@ $scope.myFunct = function(keyEvent) {
     $scope.checkCalculation()  // then calculate the user answer
 }
 
-//generate random numbers author: vamsi
+//generate random numbers author: vamsi - changed author: nataraj
 $scope.randomNumbers = function(){
-a = Math.floor(Math.random() * (4 - 1 + 1) + 1);
-b = Math.floor(Math.random() * (4 - 1 + 1) + 1);
+a = Math.floor(Math.random() * $scope.gameVariables.startingvalue + 1);
+b = Math.floor(Math.random() * $scope.gameVariables.endingvalue + 1);
 return $scope.randomOperation(a,b);
 }
 
 
-//generate random opcode author: vamsi
+//generate random opcode author: vamsi - changed author: nataraj
 $scope.randomOperation = function(a, b){
-randInt = Math.floor(Math.random() * (4 - 1 + 1) + 1);
-switch(randInt){
+randInt = $scope.gameVariables.oprators[Math.floor(Math.random() * $scope.gameVariables.oprators.length)];
+//randInt = Math.floor(Math.random() * $scope.gameVariables.oprators + 1);
+console.log(parseInt(randInt))
+switch(parseInt(randInt)){
 case 1:
 result = a + b;
 op = '+';
@@ -176,7 +241,28 @@ $scope.domresult = ''; //clearing input dom
 
 }
 
-$scope.randomNumbers() // here im kick starting the bike  zzzzzzzzzzzzzzzzzzzz
+
+
+
+//set game variables - to render data points from user to game points
+
+$scope.setGameVariables = function()
+{
+    angular.forEach($scope.selectables, function(a,b){
+    
+        if(a == true)
+        $scope.gameVariables.oprators.push(b)
+        
+    });
+    console.log($scope.gameVariables)
+    $('.modal').    modal('hide')
+    $scope.randomNumbers() // here im kick starting the bike  zzzzzzzzzzzzzzzzzzzz
+    
+}
+
+
+
+
 
 });
     
