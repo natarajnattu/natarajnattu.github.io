@@ -866,48 +866,48 @@
 //    console.log($scope.shuffled)
 //    console.log($scope.shuffled.length)
         
-    setInterval(function(){
-        if($scope.player1.length > 0){
-         var obj =  $scope.player1.pop()
-            $scope.shuffled.push(obj);
-        }
-        if($scope.player2.length > 0){
-         var obje =  $scope.player2.pop()
-            $scope.player2.pop()
-            $scope.shuffled.push(obje);
-        }
-        if($scope.shuffled.length > 0){
-            var obje1 = $scope.shuffled.pop()
-            $scope.player1.push(obje1);        
-            var obje2 = $scope.shuffled.pop()
-            $scope.player2.push(obje2);      
+//     setInterval(function(){
+//         if($scope.player1.length > 0){
+//          var obj =  $scope.player1.pop()
+//             $scope.shuffled.push(obj);
+//         }
+//         if($scope.player2.length > 0){
+//          var obje =  $scope.player2.pop()
+//             $scope.player2.pop()
+//             $scope.shuffled.push(obje);
+//         }
+//         if($scope.shuffled.length > 0){
+//             var obje1 = $scope.shuffled.pop()
+//             $scope.player1.push(obje1);        
+//             var obje2 = $scope.shuffled.pop()
+//             $scope.player2.push(obje2);      
             
-            console.log("player1 array")
-        console.log($scope.player1)
-        console.log("player2 array")
-        console.log($scope.player2)
-        console.log("shuffled")
-        console.log($scope.shuffled)
-        $scope.$apply();
+//             console.log("player1 array")
+//         console.log($scope.player1)
+//         console.log("player2 array")
+//         console.log($scope.player2)
+//         console.log("shuffled")
+//         console.log($scope.shuffled)
+//         $scope.$apply();
             
             
-        }
+//         }
         
         
-    },100)
-    setInterval(function(){
-        if($scope.player1.length > 0){
-         var obj =  $scope.player1.pop()
-            $scope.shuffled.push(obj);
-        }        
-    },200)
-    setInterval(function(){
-        if($scope.player2.length > 0){
-         var obje =  $scope.player2.pop()
-            $scope.player2.pop()
-            $scope.shuffled.push(obje);
-        }        
-    },400)
+//     },100)
+//     setInterval(function(){
+//         if($scope.player1.length > 0){
+//          var obj =  $scope.player1.pop()
+//             $scope.shuffled.push(obj);
+//         }        
+//     },200)
+//     setInterval(function(){
+//         if($scope.player2.length > 0){
+//          var obje =  $scope.player2.pop()
+//             $scope.player2.pop()
+//             $scope.shuffled.push(obje);
+//         }        
+//     },400)
     
     });
     
