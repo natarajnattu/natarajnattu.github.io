@@ -1,0 +1,279 @@
+<html ng-app="mod">
+<head>
+<title>SHub</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js"></script>
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+h1{
+    font-family: 'Roboto', sans-serif !important;
+    text-align: center
+}
+h2{
+    font-family: 'Roboto', sans-serif !important;
+    text-align: center
+}
+h3{
+    font-family: 'Roboto', sans-serif !important;
+    text-align: center
+}
+p{
+    font-family: 'Roboto', sans-serif !important;
+    text-align: center
+}
+.greenc{
+    background: #009688;
+}
+.redc{
+    background: #FFAB91;
+}
+</style>
+</head>
+
+<body ng-controller="nCtrl">
+    <div class="">
+    <div class="row">
+    <div class="col-md-8">
+        <h1>Hello {{gameVariables.name}}</h1>
+    <br>
+    <h1>{{wormHole.lo}} {{wormHole.op}} {{wormHole.ro}}</h1>
+    <div class="row">
+    <div class="col-md-3">
+        
+    </div>
+    <div class="col-md-6">
+        <input type="text" class="form-control" ng-model="domresult" ng-keyup="myFunct($event)" style="height: 70px; text-align: center" /><br>
+    </div>
+    <div class="col-md-3">
+    </div>
+        
+    </div>
+<!--       total score     -->
+    <div class="row">
+        <h2>Score: {{Hiscore}}</h2>
+    </div>
+    </div>
+        
+        
+    <div class="col-md-4" style="height: 100%; overflow-y: scroll">
+<!--    repeating game history here   ng-class for changing colors here _ -->
+        <div ng-repeat="data in history" ng-class="data.formalresult==true?'greenc': 'redc'">
+            <h3 style="margin: 0; padding: 5px; color: white; text-align: left">Ques: {{data.lo}}&nbsp;{{data.op}}&nbsp;{{data.ro}} - Score: {{data.score}}</h3>
+            <p style="margin-bottom: 0; padding: 5px; text-align:left; color: white">{{data.timeStamp._d}}</p>
+        </div>
+    </div>
+    </div>
+    </div>
+    
+<!-- Modal -->
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" style="border-radius: 0; padding: 10px">
+        <div class="row">
+        <div class="col-md-12">
+        <p  style="text-align: left;">Name</p>
+        <input type="text" class="form-control" style="width: 250px;" ng-model="gameVariables.name">
+        </div>
+        </div>
+        <br>
+        <div class="row">
+        <div class="col-md-12">
+        <h3>Select Difficuilty</h3>
+        <div style="text-align: center">
+        <label class="checkbox-inline" ng-repeat="data in Cuoperators"><input type="checkbox" ng-model="selectables[data.value]" value="data.value">{{data.operator}}</label>
+        </div>
+        
+        <div class="row">
+        <div style="text-align: center" class="col-md-12">
+            <p style="text-align: left;"><small style="color: #888">Enter a value</small></p>
+            <input type="text" class="form-control" style="width: 250px;" ng-model="gameVariables.startingvalue" />
+        </div>    
+        </div>
+            <br>    
+        <div class="row">
+        <div style="text-align: center" class="col-md-12">
+            <p style="text-align: left;"><small style="color: #888">Enter b value</small></p>
+            <input type="text" class="form-control" style="width: 250px;" ng-model="gameVariables.endingvalue" />
+        </div>    
+        </div>
+            <br>    
+        <div class="row">
+        <div style="text-align: center" class="col-md-12">
+            <p style="text-align: left;"><small style="color: #888">Let's get started</small></p>
+            <button class="btn btn-default" ng-click="setGameVariables()">Ready set GO!</button>
+        </div>    
+        </div>
+            
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+    
+</body>
+<script>
+    
+
+    
+    
+var hod = angular.module('mod', []);
+hod.controller('nCtrl', function ( $scope ) {
+    
+    
+  
+
+
+$(".modal").modal('show')
+
+$scope.selectables = {};
+
+$scope.gameVariables={
+    name: '',
+    oprators: [],
+    startingvalue: null,
+    endingvalue: null,
+}
+
+$scope.Cuoperators = [
+    {operator: "+", value: 1},
+    {operator: "-", value: 2},
+    {operator: "x", value: 3},
+    {operator: "%", value: 4},
+]
+
+// wormHole is wrapper for current question numbers, operator and result, totalscore, calculated value, and timestamp, all this will push to history to view in DOM. 
+$scope.wormHole = {
+lo : '',
+op : '',
+ro : '',
+result: 0,
+score: 0,
+formalresult: '',
+timeStamp: '',
+}    
+//for hostory DOM
+$scope.history = [];
+    
+//The Incemental/Decremental Value through out the game, this is global
+$scope.Hiscore = 0;
+
+// whether user entered enter key or not
+$scope.myFunct = function(keyEvent) {
+  if (keyEvent.which === 13)
+    $scope.checkCalculation()  // then calculate the user answer
+}
+
+//generate random numbers author: vamsi
+$scope.randomNumbers = function(){
+a = Math.floor(Math.random() * $scope.gameVariables.startingvalue + 1);
+b = Math.floor(Math.random() * $scope.gameVariables.endingvalue + 1);
+return $scope.randomOperation(a,b);
+}
+
+
+//generate random opcode author: vamsi
+$scope.randomOperation = function(a, b){
+randInt = $scope.gameVariables.oprators[Math.floor(Math.random() * $scope.gameVariables.oprators.length)];
+//randInt = Math.floor(Math.random() * $scope.gameVariables.oprators + 1);
+console.log(parseInt(randInt))
+switch(parseInt(randInt)){
+case 1:
+result = a + b;
+op = '+';
+break;
+case 2:
+result = a - b;
+op = '-';
+break;
+case 3:
+result = a * b;
+op = 'x';
+break;
+case 4:
+result = a % b;
+op = '%';
+break;
+}
+$scope.wormHole = {
+lo : '',
+op : '',
+ro : '',
+result: 0,
+score: 0,
+formalresult: ''
+} 
+
+//assigning current game values for wormHole
+$scope.wormHole.lo = a;
+$scope.wormHole.op = op;
+$scope.wormHole.ro = b;
+$scope.wormHole.result = result;
+
+}
+//checking user asnwer author: vamsi
+$scope.checkCalculation = function(){
+if($scope.domresult == $scope.wormHole.result){
+$scope.updateScore('+');
+$scope.wormHole.formalresult = true;  
+}
+else{
+$scope.updateScore('-');
+$scope.wormHole.formalresult = false;    
+}
+
+
+}
+//update user asnwer author: vamsi
+$scope.updateScore=function(q){
+if (q=='+') {
+$scope.Hiscore += 1;
+this.randomNumbers();
+}
+else if(q=='-'){
+$scope.Hiscore -= 1;
+this.randomNumbers();
+}
+else{
+this.randomNumbers();
+}
+//assigning post answer values to wormhole to display in DOM
+$scope.wormHole.score = $scope.Hiscore;
+$scope.wormHole.timeStamp = moment();
+//pushing data to history
+$scope.history.push($scope.wormHole)
+$scope.domresult = ''; //clearing input dom
+
+}
+
+
+
+
+
+
+$scope.setGameVariables = function()
+{
+    angular.forEach($scope.selectables, function(a,b){
+    
+        if(a == true)
+        $scope.gameVariables.oprators.push(b)
+        
+    });
+    console.log($scope.gameVariables)
+    $('.modal').modal('hide')
+    $scope.randomNumbers() // here im kick starting the bike  zzzzzzzzzzzzzzzzzzzz
+    
+}
+
+
+
+
+
+});
+    
+</script>
+</html>
