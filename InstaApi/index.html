@@ -1,0 +1,317 @@
+<!DOCTYPE html><html class=''>
+<head>
+<meta charset='UTF-8'>
+<meta name="robots" content="noindex">
+<style >html, body{
+  height:100%;
+  width: 100%;
+  margin: 0;
+  left: 0;
+  top: 0;
+  font-family: 'Courier New'
+}
+pre{
+  font-family: 'Courier New'
+}
+.ace_editor  {
+  height : 100%;
+}
+</style>
+<style class="cp-pen-styles">.contain {
+  position: relative;
+  margin: 155px auto;
+  width: 200px;
+}
+
+svg {
+  position: absolute;
+}
+svg ellipse {
+  -webkit-transform-origin: center;
+          transform-origin: center;
+}
+svg:nth-of-type(1) ellipse {
+  stroke: #F1725D;
+  cx: 25px;
+  stroke-width: 3px;
+  -webkit-animation: jump 600ms infinite ease-in-out;
+          animation: jump 600ms infinite ease-in-out;
+  opacity: .7;
+  -webkit-animation-delay: 0ms;
+          animation-delay: 0ms;
+}
+svg:nth-of-type(2) ellipse {
+  stroke: #38BDAB;
+  cx: 65px;
+  stroke-width: 3px;
+  -webkit-animation: jump 600ms infinite ease-in-out;
+          animation: jump 600ms infinite ease-in-out;
+  opacity: .7;
+  -webkit-animation-delay: 75ms;
+          animation-delay: 75ms;
+}
+svg:nth-of-type(3) ellipse {
+  stroke: #9D30A5;
+  cx: 105px;
+  stroke-width: 3px;
+  -webkit-animation: jump 600ms infinite ease-in-out;
+          animation: jump 600ms infinite ease-in-out;
+  opacity: .7;
+  -webkit-animation-delay: 150ms;
+          animation-delay: 150ms;
+}
+svg:nth-of-type(4) ellipse {
+  stroke: #B779E2;
+  cx: 145px;
+  stroke-width: 3px;
+  -webkit-animation: jump 600ms infinite ease-in-out;
+          animation: jump 600ms infinite ease-in-out;
+  opacity: .7;
+  -webkit-animation-delay: 225ms;
+          animation-delay: 225ms;
+}
+svg:nth-of-type(5) ellipse {
+  stroke: #683893;
+  cx: 185px;
+  stroke-width: 3px;
+  -webkit-animation: jump 600ms infinite ease-in-out;
+          animation: jump 600ms infinite ease-in-out;
+  opacity: .7;
+  -webkit-animation-delay: 300ms;
+          animation-delay: 300ms;
+}
+svg:nth-of-type(6) ellipse {
+  fill: #333333;
+  opacity: .05;
+  rx: 0;
+  ry: 0;
+  cx: 25px;
+  cy: 48px;
+  -webkit-animation: shadow 600ms infinite ease-in-out;
+          animation: shadow 600ms infinite ease-in-out;
+  -webkit-animation-delay: 0ms;
+          animation-delay: 0ms;
+}
+svg:nth-of-type(7) ellipse {
+  fill: #333333;
+  opacity: .05;
+  rx: 0;
+  ry: 0;
+  cx: 65px;
+  cy: 48px;
+  -webkit-animation: shadow 600ms infinite ease-in-out;
+          animation: shadow 600ms infinite ease-in-out;
+  -webkit-animation-delay: 75ms;
+          animation-delay: 75ms;
+}
+svg:nth-of-type(8) ellipse {
+  fill: #333333;
+  opacity: .05;
+  rx: 0;
+  ry: 0;
+  cx: 105px;
+  cy: 48px;
+  -webkit-animation: shadow 600ms infinite ease-in-out;
+          animation: shadow 600ms infinite ease-in-out;
+  -webkit-animation-delay: 150ms;
+          animation-delay: 150ms;
+}
+svg:nth-of-type(9) ellipse {
+  fill: #333333;
+  opacity: .05;
+  rx: 0;
+  ry: 0;
+  cx: 145px;
+  cy: 48px;
+  -webkit-animation: shadow 600ms infinite ease-in-out;
+          animation: shadow 600ms infinite ease-in-out;
+  -webkit-animation-delay: 225ms;
+          animation-delay: 225ms;
+}
+svg:nth-of-type(10) ellipse {
+  fill: #333333;
+  opacity: .05;
+  rx: 0;
+  ry: 0;
+  cx: 185px;
+  cy: 48px;
+  -webkit-animation: shadow 600ms infinite ease-in-out;
+          animation: shadow 600ms infinite ease-in-out;
+  -webkit-animation-delay: 300ms;
+          animation-delay: 300ms;
+}
+
+@-webkit-keyframes jump {
+  40% {
+    -webkit-transform: translateY(20px) scale(1.3);
+            transform: translateY(20px) scale(1.3);
+    opacity: .9;
+  }
+  40% {
+    rx: 10px;
+    ry: 10px;
+    stroke-width: 3px;
+  }
+  45% {
+    rx: 15px;
+    ry: 7px;
+    stroke-width: 4px;
+  }
+  55% {
+    rx: 10px;
+    ry: 10px;
+  }
+}
+
+@keyframes jump {
+  40% {
+    -webkit-transform: translateY(20px) scale(1.3);
+            transform: translateY(20px) scale(1.3);
+    opacity: .9;
+  }
+  40% {
+    rx: 10px;
+    ry: 10px;
+    stroke-width: 3px;
+  }
+  45% {
+    rx: 15px;
+    ry: 7px;
+    stroke-width: 4px;
+  }
+  55% {
+    rx: 10px;
+    ry: 10px;
+  }
+}
+@-webkit-keyframes shadow {
+  45% {
+    opacity: .15;
+    rx: 10px;
+    ry: 3px;
+    -webkit-transform: translateY(5px) scale(1.3);
+            transform: translateY(5px) scale(1.3);
+  }
+}
+@keyframes shadow {
+  45% {
+    opacity: .15;
+    rx: 10px;
+    ry: 3px;
+    -webkit-transform: translateY(5px) scale(1.3);
+            transform: translateY(5px) scale(1.3);
+  }
+}
+</style>
+<link rel="stylesheet" type="text/css" href="swal.css">
+</head><body>
+
+<html ng-app="x">
+
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body ng-controller="mainctrl" >
+  <div ng-keydown="keyDownFunc($event)" id="editableDiv">
+  <!-- <pre>{{nattu | json}}</pre>dasfadsf -->
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <svg height='80' width='210'>
+    <ellipse cx='25' cy='20' fill='none' rx='10' ry='10'></ellipse>
+  </svg>
+  <br><br><br><br>
+  <pre>{{data | json}}</pre>click me and paste json here
+  </div>
+
+
+
+    <!-- Le vendor... -->
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+      <script type="text/javascript" src="swal.js"></script>
+  </body>
+</html>
+
+<script>var app = angular.module('x', []);
+app.controller('mainctrl',['$scope', '$window', function($scope, $window){
+
+swal('welcome to InstaJson','just paste the json and you will get a rest -- rest api','success')
+
+  $scope.nattu1 = '{    "glossary": {        "title": "example glossary",    "GlossDiv": {            "title": "S",      "GlossList": {                "GlossEntry": {                    "ID": "SGML",          "SortAs": "SGML",          "GlossTerm": "Standard Generalized Markup Language",          "Acronym": "SGML",          "Abbrev": "ISO 8879:1986",          "GlossDef": {                        "para": "A meta-markup language, used to create markup languages such as DocBook.",            "GlossSeeAlso": ["GML", "XML"]                    },          "GlossSee": "markup"                }            }        }    }}';
+
+  console.log($scope.nattu1)
+
+$scope.parJson = function (json) {
+   return angular.fromJson(json);
+}
+  $scope.nattu = JSON.parse($scope.nattu1)
+
+
+function IsJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+
+function handlePaste (e) {
+    var clipboardData, pastedData;
+
+    // Stop data actually being pasted into div
+    e.stopPropagation();
+    e.preventDefault();
+
+    // Get pasted data via clipboard API
+    clipboardData = e.clipboardData || window.clipboardData;
+    pastedData = clipboardData.getData('Text');
+
+    // Do whatever with pasteddata
+    try{
+    $scope.data = JSON.parse(pastedData)
+    } catch(e){
+      console.log('not a valid json')
+      sweetAlert("Oops...", "not a valid json", "error");
+    }
+
+    if(IsJsonString(pastedData)){
+      swal('json created: http://myapi-nataraj.rhcloud.com/rest/eXCUxx','','success')
+    }else {
+      sweetAlert("Oops...", "not a valid json", "error");
+    }
+
+    $scope.$apply();
+    console.log($scope.data)
+}
+
+document.getElementById('editableDiv').addEventListener('paste', handlePaste);
+
+}])
+</script>
+</body></html>
