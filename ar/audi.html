@@ -134,8 +134,9 @@
     
         var objectLoader = new THREE.ObjectLoader();
 				objectLoader.load("audi.json", function ( obj ) {
+                    alert('adding');
 				 	scene.add( obj );
-                    alert('added')
+                    alert('added');
                 });
     
     
