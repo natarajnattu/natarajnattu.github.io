@@ -1,0 +1,13 @@
+{
+	"metadata": {
+		"version": 4.5,
+		"type": "Object",
+		"generator": "Object3D.toJSON"
+	},
+	"object": {
+		"uuid": "B0C4E574-DECC-3D97-99F0-60577F3026BF",
+		"type": "Object3D",
+		"name": "CameraPreset",
+		"matrix": [-1,0,0,0,0,0,1,0,0,1,0,0,-0.01095,0.5237,0,1]
+	}
+}
