@@ -131,14 +131,17 @@
 	var mesh	= new THREE.Mesh( geometry, material );
 	mesh.position.y	= geometry.parameters.height/2
 	scene.add( mesh );
-    
+    var Robj;
         var objectLoader = new THREE.ObjectLoader();
 				objectLoader.load("audi.json", function ( obj ) {
                     alert('adding');
 //                    obj.scale.set( .5, .5, .5 );
                     obj.scale.x = obj.scale.y = obj.scale.z = 0.2;
 				 	scene.add( obj );
-                    obj.rotateX(90);
+                    //obj.rotateX(90);
+                    	onRenderFcts.push(function(delta){
+		                  obj.rotation.x += Math.PI*delta
+	                   })
                     obj.scale.x = obj.scale.y = obj.scale.z = 0.2;
                     alert('added');
                 });
@@ -151,15 +154,13 @@
 //	mesh.position.y	= 0.5
 //	scene.add( mesh );
 //	
-//	onRenderFcts.push(function(delta){
-//		mesh.rotation.x += Math.PI*delta
-//	})
+
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the whole thing on the page
 	//////////////////////////////////////////////////////////////////////////////////
 
-	// render the scene
+	// render the scene    
 	onRenderFcts.push(function(){
 		renderer.render( scene, camera );
 	})
