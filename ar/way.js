@@ -1,0 +1,1 @@
+{"animation":{"hierarchy":[],"JIT":0,"length":4.0,"fps":30,"name":"animation1"},"materials":[{}],"metadata":{"formatVersion":3.1}}
