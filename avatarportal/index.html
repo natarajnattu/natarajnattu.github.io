@@ -23,9 +23,11 @@
   </style>
 </head>
 <body class="fullscreen">
-  <button class="add-button">Add to home screen</button>
+  
   <div class="container">
     <h1 class="title">Hello World!</h1>
+    <br><br>
+    <button class="add-button">Add to home screen</button>
   </div>
   <script src="js/main.js"></script>
 </body>
@@ -44,7 +46,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
   addBtn.addEventListener('click', (e) => {
     // hide our user interface that shows our A2HS button
-    addBtn.style.display = 'none';
+    // addBtn.style.display = 'none';
     // Show the prompt
     deferredPrompt.prompt();
     // Wait for the user to respond to the prompt
