@@ -24,22 +24,22 @@ html,
 
 
 #installer {
-  position: absolute;
+  /* position: absolute;
   opacity: 0;
   top: 0;
   right: 0;
   text-align: center;
-  transition: opacity 300ms ease-in-out;
+  transition: opacity 300ms ease-in-out; */
 }
 
 #installer.available {
-  opacity: 1;
+  /* opacity: 1; */
 }
 
 #installer .button {
-  border: white 1px solid;
+  /* border: white 1px solid;
   margin:10px;
   padding: 10px;
   color: white;
-  background-color: transparent;
+  background-color: transparent; */
 }
