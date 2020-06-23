@@ -13,9 +13,9 @@
     <meta name='application-name' content='Air Horner'>
     <meta name='apple-mobile-web-app-status-bar-style' content='black'>
     <meta name='apple-mobile-web-app-title' content='Air Horner'>
-    <link rel='icon' sizes='192x192' href='/images/touch/android-launchericon-192-192.png'>
-    <link rel='apple-touch-icon'  href='/images/touch/android-launchericon-192-192.png'>
-    <meta name='msapplication-TileImage' content='/images/touch/android-launchericon-144-144.png'>
+    <link rel='icon' sizes='192x192' href='images/touch/android-launchericon-192-192.png'>
+    <link rel='apple-touch-icon'  href='images/touch/android-launchericon-192-192.png'>
+    <meta name='msapplication-TileImage' content='images/touch/android-launchericon-144-144.png'>
     <meta name='msapplication-TileColor' content='#2196F3'>
     <meta name='theme-color' content='#2196F3'>
     <meta property='og:title' content='Air Horn'>
@@ -31,7 +31,7 @@
     <meta name='twitter:creator' content='@paul_kinlan'>
     <meta http-equiv='origin-trial' content='AoSmmU3xCcjOI6/9ixevLMwZJ6JQf+SEY0pIJPkw720gFR8VtDejaYmdkg9JX/sow51jBNeuoxzPlFg35jaMyQcAAABQeyJvcmlnaW4iOiJodHRwczovL2Fpcmhvcm5lci5jb206NDQzIiwiZmVhdHVyZSI6IkJhZGdpbmdWMiIsImV4cGlyeSI6MTYwMDIxNDM5OX0='>
     <link rel='stylesheet' href='styles/main.css'>
-    <script src='/scripts/pwacompat.min.js' async></script>
+    <script src='scripts/pwacompat.min.js' async></script>
   </head>
   <body>
     <div id='container'>
@@ -46,12 +46,12 @@
     <div id='installer'>
       <button class='button'>Install</button>
     </div>
-    <script src=/scripts/main.min.js></script>
-    <script src=/scripts/comlink.global.js></script>
-    <script src=/scripts/messagechanneladapter.global.js></script>
+    <script src=scripts/main.min.js></script>
+    <script src=scripts/comlink.global.js></script>
+    <script src=scripts/messagechanneladapter.global.js></script>
     <script>
       if('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        navigator.serviceWorker.register('sw.js', { scope: '/' })
           .then(function(registration) {
                 console.log('Service Worker Registered');
           });
