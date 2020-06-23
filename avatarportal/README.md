@@ -1,46 +1,25 @@
-# Air Horn
+# Hello PWA
+The classic Hello World program as a Progressive Web App
 
-A sample web app that lets you use your site as an airhorn. 
+![Hello World Screenshot](./screenshot.jpg "Hello World Screenshot")
 
-It demonstrates simple offline usage combined with simple audio looping via web audio.
+## What It Is
 
-## Installing
+A simple PWA demo that displays the text "Hello, World!" utilizing an app manifest, service workers and caching. This demo is written in plain-vanilla HTML, CSS and Javascript (ES6). It has no dependencies.
 
-Whilst you don't need to use the build process, if you want to host this publicly it is recommended 
-that you optimise all the assets for deployment and as such it is recommended that you run the 
-following command in the current working directory:
+I've also written a tutorial to go along with the code. Read it on Medium:
 
-    npm install
+https://medium.com/james-johnson/a-simple-progressive-web-app-tutorial-f9708e5f2605
 
-## Building
+## Demo
 
-If you want to run this app locally, you don't have to build the app, the build process is just there
-to optimize everything for deployment.
+https://jamesjohnson280.github.io/hello-pwa/
 
-There is a build process that will optimize the images, styles and JS ready for deployment.  To run this
-simple execute the following command from the root directory:
+## Browser Compatibility
 
-    gulp
+Hello PWA has been tested in the following browsers:
 
-## Running
-
-There are number of ways to run Airhorner.  The simplest (if you have Python installed) is to
-start a simple web server up is to use Python's SimpleHTTPServer.  Run the following:
-
-    cd app && python -m SimpleHTTPServer 3000
-
-This will just load the existing contents of the directory up and it won't support things like live
-reload and inline optimizations.  To run the project with optimizations in place and to support live reload
-run the following command:
-
-    gulp serve
-
-## License
-
-Copyright 2015 Google, Inc.
-
-Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to you under the Apache License, Version 2.0 (the “License”); you may not use this file except in compliance with the License. You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+* Chrome 67 (Windows and Android)
+* Firefox 60
+* Safari 11
+* Edge 42
