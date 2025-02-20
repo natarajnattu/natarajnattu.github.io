@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nataraj Atchula - Resume</title>
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <style>
         body {
             font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -14,7 +13,6 @@
             background: #f5f5f7;
             color: #1d1d1f;
             line-height: 1.5;
-            overflow-x: hidden;
         }
         .container {
             max-width: 980px;
@@ -26,16 +24,15 @@
             animation: fadeIn 0.8s ease-out;
         }
         header {
-            padding: 20px 40px;
+            padding: 60px 40px 40px;
             text-align: center;
             background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
             border-bottom: 1px solid #d2d2d7;
-            position: relative;
         }
         header h1 {
             font-size: 48px;
             font-weight: 600;
-            margin: 20px 0 10px;
+            margin: 0;
             letter-spacing: -0.02em;
         }
         header p {
@@ -49,13 +46,6 @@
         }
         header a:hover {
             text-decoration: underline;
-        }
-        #threejs-canvas {
-            width: 100%;
-            height: 200px;
-            position: relative;
-            top: 0;
-            left: 0;
         }
         .section {
             padding: 40px;
@@ -119,7 +109,7 @@
                 border-radius: 12px;
             }
             header {
-                padding: 20px;
+                padding: 40px 20px 20px;
             }
             header h1 {
                 font-size: 36px;
@@ -133,16 +123,12 @@
             .section h2 {
                 font-size: 24px;
             }
-            #threejs-canvas {
-                height: 150px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <div id="threejs-canvas"></div>
             <h1>Nataraj Atchula</h1>
             <p>IB Design & Computer Science Teacher</p>
             <p>Location: Baku, Azerbaijan</p>
@@ -194,6 +180,7 @@
                     <li>Designed interactive virtual classroom modules with educators.</li>
                 </ul>
             </div>
+            <!-- Add more jobs as needed -->
         </div>
 
         <div class="section">
@@ -208,51 +195,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        // Three.js Setup
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 200, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
-        renderer.setSize(window.innerWidth, 200);
-        document.getElementById('threejs-canvas').appendChild(renderer.domElement);
-
-        // Cube Geometry
-        const geometry = new THREE.BoxGeometry(2, 2, 2);
-        const material = new THREE.MeshPhongMaterial({ 
-            color: 0x0071e3, 
-            shininess: 100, 
-            emissive: 0x003087, 
-            emissiveIntensity: 0.5 
-        });
-        const cube = new THREE.Mesh(geometry, material);
-        scene.add(cube);
-
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0xffffff, 1);
-        pointLight.position.set(5, 5, 5);
-        scene.add(pointLight);
-
-        // Camera Position
-        camera.position.z = 5;
-
-        // Animation
-        function animate() {
-            requestAnimationFrame(animate);
-            cube.rotation.x += 0.01;
-            cube.rotation.y += 0.01;
-            renderer.render(scene, camera);
-        }
-        animate();
-
-        // Resize Handler
-        window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, 200);
-            camera.aspect = window.innerWidth / 200;
-            camera.updateProjectionMatrix();
-        });
-    </script>
 </body>
 </html>
