@@ -1,359 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nataraj Atchula - Resume</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 980px;
+            margin: 60px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+        header {
+            padding: 60px 40px 40px;
+            text-align: center;
+            background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
+            border-bottom: 1px solid #d2d2d7;
+        }
+        header h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+        header p {
+            font-size: 20px;
+            color: #6e6e73;
+            margin: 8px 0;
+        }
+        header a {
+            color: #0071e3;
+            text-decoration: none;
+        }
+        header a:hover {
+            text-decoration: underline;
+        }
+        .section {
+            padding: 40px;
+        }
+        .section h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
+        }
+        .section p, .section ul {
+            font-size: 17px;
+            color: #515154;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .section ul li {
+            margin: 12px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+        .section ul li::before {
+            content: '•';
+            color: #0071e3;
+            position: absolute;
+            left: 0;
+            font-size: 14px;
+        }
+        .job {
+            margin-bottom: 30px;
+        }
+        .job h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin: 0;
+        }
+        .job .details {
+            font-size: 16px;
+            color: #6e6e73;
+            margin: 5px 0 10px;
+        }
+        .highlight {
+            background: #f5f5f7;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                border-radius: 12px;
+            }
+            header {
+                padding: 40px 20px 20px;
+            }
+            header h1 {
+                font-size: 36px;
+            }
+            header p {
+                font-size: 18px;
+            }
+            .section {
+                padding: 20px;
+            }
+            .section h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nataraj Atchula</h1>
+            <p>IB Design & Computer Science Teacher</p>
+            <p>Location: Baku, Azerbaijan</p>
+            <p>Contact: +91 741-6883432 | <a href="mailto:natturaju@gmail.com">natturaju@gmail.com</a></p>
+        </header>
 
-<!DOCTYPE html><html class=''>
-<head><meta charset='UTF-8'><meta name="robots" content="noindex">
-</head><body>
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-<link href="nattu.css" rel="stylesheet">
-
-
-
-<div class="desktop">
-  <div class="start-menu-fade"></div>
-  <div class="start-menu">
-    <div class="start-menu__list">
-      <div class="media">
-        <a class="user-info" href="#">
-        <img class="user-info__img media__img" src="http://i.imgur.com/KkCqvK9.png" alt="User image">
-        <div class="user-info__name media__body">
-          Nattu
+        <div class="section">
+            <h2>Professional Summary</h2>
+            <p>Passionate educator and IT professional dedicated to transforming learning experiences through technology and design. With a strong background in software engineering and instructional design, I aim to create engaging, student-centered learning environments that bridge theoretical knowledge with real-world applications. My expertise lies in curriculum development, project-based learning, and integrating emerging technologies like AI and VR into education to enhance student outcomes.</p>
         </div>
-        </a>
-        <a class="user-info__power" href="#">
-          <i class="fa fa-power-off"></i>
-        </a>
-      </div>
-      
 
-      <ul class="start-menu__recent">
-        <li class="start-menu__explorer">
-          <a href="#" data-window="explorer">
-            <i class="fa fa-folder"></i>
-            Explorer
-          </a>
-        </li>
-        <li class="start-menu__mail">
-          <a href="#" data-window="mail">
-            <i class="fa fa-envelope"></i>
-            Email
-          </a>
-        </li>
-        <li class="start-menu__notepad">
-          <a href="#" data-window="notepad">
-            <i class="fa fa-pencil"></i>
-            Notes
-          </a>
-        </li>
-      </ul>
-      
-      <a class="all-apps" href="#">
-        All Applications
-        <i class="fa fa-arrow-right"></i>
-      </a>
-      
-      <input type="text" class="search" placeholder="Search files and folders">
-    </div>
-    <div class="start-screen-scroll">
-    <div class="start-screen">
-      <a class="start-screen__tile start-screen__tile--explorer masonry-item" href="#">
-        <i class="fa fa-folder"></i>
-        <span>Explorer</span>
-      </a>
-      <a class="start-screen__tile masonry-item" href="#">
-      </a>
-      <a class="start-screen__tile start-screen__tile--wide masonry-item" href="#"  data-ss-colspan="2">
-      </a>
-      <div class="start-screen__smallgroup masonry-item">
-      <a class="start-screen__tile start-screen__tile--small" href="#"></a>
-        <a class="start-screen__tile start-screen__tile--small" href="#"></a>
-        <a class="start-screen__tile start-screen__tile--small" href="#"></a>
-      </div>
-      <a class="start-screen__tile masonry-item" href="#">
-      </a>
-      <a class="start-screen__tile masonry-item" href="#">
-      </a>
-      <a class="start-screen__tile start-screen__tile--notepad masonry-item" href="#">
-      </a>
-      <a class="start-screen__tile start-screen__tile--large start-screen__tile--mail masonry-item" href="#" data-ss-colspan="2">
-        <i class="fa fa-envelope"></i>
-        <span>Mail</span>
-      </a>
-      <a class="start-screen__tile masonry-item" href="#">
-      </a>
-      <a class="start-screen__tile masonry-item" href="#">
-      </a>
-      <a class="start-screen__tile masonry-item" href="#">
-      </a>
-    </div>
-    </div>
-  </div>
-  
-  <div class="taskbar">
-    <a class="taskbar__item taskbar__item--start" href="#" data-window="start">
-      <i class="fa fa-cube"></i>
-    </a>
-    <a class="taskbar__item taskbar__item--explorer" href="#" data-window="explorer">
-      <i class="fa fa-folder"></i>
-    </a>
-    <a class="taskbar__item taskbar__item--mail" href="#" data-window="mail">
-      <i class="fa fa-envelope"></i>
-    </a>
-    <a class="taskbar__item taskbar__item--notepad" href="#" data-window="notepad">
-      <i class="fa fa-pencil"></i>
-    </a>
-    
-    <div class="taskbar__tray">
-      <span class="time">
-        <script>
-          
-         </script>
-      </span>
-    </div>
-  </div>
-  
-  
-  <div class="window window--explorer" data-window="explorer" style="width:640px;height:400px;top:5%;left:10%;">
-    <div class="window__titlebar">
-      <div class="window__controls window__controls--left">
-        <a class="window__icon" href="#"><i class="fa fa-folder"></i></a>
-        <a class="window__menutoggle" href="#"><i class="fa fa-bars"></i></a>
-      </div>
-      
-      
-      
-      <span class="window__title">
-        Explorer
-      </span>
-      
-      <div class="window__controls window__controls--right">
-        <a class="window__minimize" href="#"><i class="fa fa-minus"></i></a>
-        <a class="window__maximize" href="#"><i class="fa"></i></a>
-        <a class="window__close" href="#"><i class="fa fa-close"></i></a>
-      </div>
-    </div>
-    
-    <ul class="window__menu">
-        <li>
-          <a href="#">
-            <i class="menu__icon fa fa-search"></i>
-            One View
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="menu__icon fa fa-share-alt"></i>
-            Two View
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="menu__icon fa fa-plug"></i>
-            Thr View
-          </a>
-        </li>
-        <li class="divided">
-          <a href="#">
-            <i class="menu__icon fa fa-cog"></i>
-            Fou View
-          </a>
-        </li>
-      </ul>
-    
-    <div class="window__body">
-      <div class="window__side">
-        
-        <ul class="side__list">
-          <li><a href="#">Cloud</a></li>
-          <li>
-            <a href="#">Favourites</a>
+        <div class="section">
+            <h2>Core Competencies</h2>
             <ul>
-              <li><a href="#">Drive D</a></li>
-              <li><a href="#">Drive E</a></li>
-              <li><a href="#">Drive F</a></li>
-          </ul>
-        </li>
-          <li>
-            <a href="#">Distinct</a>
-            <ul style="display:none">
-              <li><a href="#">Github</a>
-                <ul style="display:none">
-                  <li>
-                    <a href="#">Screens</a>
-                  </li>
+                <li><strong>Technical Skills:</strong> Web Application Architecture, Open Source Libraries, Google Cloud, AWS, Firebase</li>
+                <li><strong>Programming Languages:</strong> HTML, JavaScript, CSS, Python, AngularJS, C++, PostgreSQL, MongoDB</li>
+                <li><strong>Design & Development:</strong> UI/UX Design, Photoshop, Illustrator</li>
+                <li><strong>Specializations:</strong> Relational & Non-relational Databases, AI & Machine Learning (Certified)</li>
+                <li><strong>Educational Expertise:</strong> Curriculum Development, IB & Project-Based Learning, Student Engagement Strategies, Technology Integration in Classrooms</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Education</h2>
+            <p><strong>Bachelor’s in Information Technology</strong><br>St. Ann’s College of Engineering and Technology, Chirala | 2009 - 2013</p>
+        </div>
+
+        <div class="section">
+            <h2>Certifications</h2>
+            <p>Artificial Intelligence & Machine Learning – International Institute of Information Technology, Bangalore</p>
+        </div>
+
+        <div class="section">
+            <h2>Professional Experience</h2>
+            <div class="job">
+                <h3>Dunya School - Baku, Azerbaijan</h3>
+                <p class="details">Design & Computer Science Teacher (Sept 2023 - Present)</p>
+                <ul>
+                    <li>Designed and implemented a project-based MYP Design curriculum aligned with IB standards.</li>
+                    <li>Delivered engaging IB DP Computer Science lessons, covering exam strategies and hands-on exercises.</li>
+                    <li>Mentored students in AI, programming, and digital design research projects.</li>
                 </ul>
-              </li>
-              <li><a href="#">Documents</a></li>
-              <li><a href="#">Music</a></li>
-              <li><a href="#">Disc Local  (C:)</a></li>
-        </ul>
-      </div>
-      <div class="window__main">
-        Nataraj Atchula <br>
-        Like my work send me an email at natturaju@gmail.com <br>
-        contact : 7416883432
-      </div>
-    </div>
-    
-  </div>
-    
-     <div class="window window--mail" data-window="mail" style="display:none;width:400px;height:300px;top:40%;left:40%;">
-    <div class="window__titlebar">
-      <div class="window__controls window__controls--left">
-        <a class="window__icon" href="#"><i class="fa fa-envelope"></i></a>
-        <a class="window__menutoggle" href="#"><i class="fa fa-bars"></i></a>
-      </div>
-      
-      
-      
-      <span class="window__title">
-        Correo
-      </span>
-      
-      <div class="window__controls window__controls--right">
-        <a class="window__minimize" href="#"><i class="fa fa-minus"></i></a>
-        <a class="window__maximize" href="#"><i class="fa"></i></a>
-        <a class="window__close" href="#"><i class="fa fa-close"></i></a>
-      </div>
-    </div>
-    
-    <ul class="window__menu">
-        <li>
-          <a href="#">
-            <i class="menu__icon fa fa-search"></i>
-            One View
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="menu__icon fa fa-share-alt"></i>
-            One View
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="menu__icon fa fa-plug"></i>
-            One View
-          </a>
-        </li>
-        <li class="divided">
-          <a href="#">
-            <i class="menu__icon fa fa-cog"></i>
-            One View
-          </a>
-        </li>
-      </ul>
-    
-    <div class="window__body">
-      <div class="window__side">
-        
-      </div>
-      <div class="window__main">
-        
-      </div>
-    </div>
-    
-  </div>
-    
-    
- <div class="window window--notepad" data-window="notepad" style="displawidth:600px;height:300px;top:10%;left:30%;">
-    <div class="window__titlebar">
-      <div class="window__controls window__controls--left">
-        <a class="window__icon" href="#"><i class="fa fa-pencil"></i></a>
-        <a class="window__menutoggle" href="#"><i class="fa fa-bars"></i></a>
-      </div>
-      
-      
-      
-      <span class="window__title">
-        Notes
-      </span>
-      
-      <div class="window__controls window__controls--right">
-        <a class="window__minimize" href="#"><i class="fa fa-minus"></i></a>
-        <a class="window__maximize" href="#"><i class="fa"></i></a>
-        <a class="window__close" href="#"><i class="fa fa-close"></i></a>
-      </div>
-    </div>
-    
-    <ul class="window__menu">
-        <li>
-          <a href="#">
-            <i class="menu__icon fa fa-download"></i>
-            One View
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="menu__icon fa fa-folder-open"></i>
-            One View
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i class="menu__icon fa fa-print"></i>
-            One View
-          </a>
-        </li>
-      <li>
-          <a href="#">
-            <i class="menu__icon fa fa-share-alt"></i>
-            One View
-          </a>
-        </li>
-      
-        <li class="divided">
-          <a href="#">
-            <i class="menu__icon fa fa-file"></i>
-            One View
-          </a>
-      </li>
-      <li>
-          <a href="#">
-            <i class="menu__icon fa fa-cog"></i>
-            One View
-        </a>
-      </li>
-   </ul>
-    
-    <div class="window__body">
-      <div class="window__main">
-        <textarea class="full-textarea"></textarea>
-      </div>
-    </div>
-    
-  </div>
+            </div>
+            <div class="job">
+                <h3>INNOJC PVT LTD - Hyderabad, India</h3>
+                <p class="details">Technical Lead (Aug 2022 - July 2023)</p>
+                <ul>
+                    <li>Led VR/AR application development using Unreal Engine for immersive learning.</li>
+                    <li>Designed interactive virtual classroom modules with educators.</li>
+                </ul>
+            </div>
+            <!-- Add more jobs as needed -->
+        </div>
 
-    
-    
-</div>
-
-
-<div class="context" hidden>
-  <div class="context_item"> 
-    <div class="inner_item">
-      copy
-    </div> 
-  </div>
-  <div class="context_item"> 
-    <div class="inner_item">
-      cut
-    </div> 
-  </div>
-  <div class="context_item"> 
-    <div class="inner_item">
-      Paste
-    </div> 
-  </div>
-  <div class="context_hr"></div>
-  <div class="context_item"> 
-    <div class="inner_item">
-      Other
-    </div> 
-  </div>
-</div>  
-<script src='jquery.min.js'></script>
-<script src='jqueryui.min.js'></script>
-<script src='masonry.min.js'></script>
-<script src='nattu.js'></script>
-
-</body></html>
+        <div class="section">
+            <h2>Key Highlights</h2>
+            <div class="highlight">
+                <ul>
+                    <li>Experienced in IB curriculum development with a focus on student-centered learning.</li>
+                    <li>Expertise in AI, machine learning, and VR applications for education.</li>
+                    <li>Strong advocate for technology-driven education.</li>
+                    <li>Passionate about empowering students through innovative teaching strategies.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
