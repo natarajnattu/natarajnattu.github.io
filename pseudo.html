@@ -1,469 +1,452 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>EZ Pseudocode Translator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        table {
-            width: 99%;
-            border-collapse: collapse;
-        }
-        #CodeCell, #ViewCell {
-            vertical-align: top;
-            padding: 5px;
-        }
-        #tCode {
-            width: 600px;
-            height: 550px;
-            font-size: 14px;
-            font-family: monospace;
-            background-color: #e6f7ff;
-            border: 1px solid #88ccff;
-        }
-        #viewFrame {
-            width: 550px;
-            height: 550px;
-            border: 1px solid #88ccff;
-            background-color: white;
-        }
-        .header {
-            background-color: #88ccff;
-            padding: 5px;
-        }
-        .controls {
-            padding: 5px;
-        }
-        button {
-            padding: 3px 8px;
-            margin: 2px;
-            background-color: #eeeeff;
-            border: 1px solid #88aaff;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #ddeeff;
-        }
-        select {
-            padding: 3px;
-        }
-    </style>
-</head>
-<body>
-<div class="header">
-    <table>
-        <tr>
-            <td>
-                <div class="controls">
-                    <select id="SamplesList">
-                        <option value="*">- Sample Programs -</option>
-                    </select>
-                    <button onclick="saveProgram()">Save</button>
-                    <button onclick="loadProgram()">Load</button>
-                    <button onclick="test()">Run in Box (at right)</button>
-                    <button onclick="publish()">Run In New Window</button>
-                    <button onclick="clearTestFrame()">Clear Page</button>
-                    <span>line: </span>
-                    <span id="lineNumberBox"></span>
-                </div>
-            </td>
-            <td align="right">
-                <font face="Arial" size="-1">
-                    <b>= EZ Pseudocode =</b></font><br>
-                <font face="TimesRoman" size="-1">(c) Dave Mulkey 2012 - Modernized 2023</font>
-            </td>
-        </tr>
-    </table>
-</div>
+<HTML> 
+<BODY onload="testFrame = frames[0]">
+<table width="99%" bgcolor="#88ccff">
+<tr><td>
+<div bgcolor="#99ccff">&nbsp;
+<select id="SamplesList" onchange="loadSample(this.value)">
+<option value="*">- Sample Programs -</option>
+</select>
 
+<input type="button" value="Save" onclick="saveProgram()">
+<input type="button" value="Load" onclick="loadProgram()">
+<INPUT TYPE="button" VALUE="Run in Box (at right)" style="background:#eeeeff;width:180px;font:bold" ONCLICK="test()">
+<INPUT TYPE="button" VALUE="Run In New Window" onclick="publish()"> 
+<input type="button" value="Clear Page" onclick="clearTestFrame(testFrame)">
+<span>line:</span>
+<span id="lineNumberBox"></span>
+
+</td><td halign="right" >
+<font face="Arial" size="-1">
+<b>= EZ Pseudocode =</b></font><br>
+<font face="TimesRoman" size="-1">(c) Dave Mulkey 2012</font>
+</td></tr></table>
 <table border=1>
-    <tr>
-        <td id="CodeCell" bgcolor="#88ccff">
-            <textarea id="tCode" wrap="OFF"></textarea>
-        </td>
-        <td id="ViewCell" bgcolor="#99ccff">
-            <iframe id="viewFrame" title="viewFrame"></iframe>
-        </td>
-    </tr>
+<tr>
+<td id="CodeCell"  valign="top" bgcolor="#88ccff">
+
+<TEXTAREA id="tCode" style="width:600px;height:550px;font-size:14px" wrap="OFF" onfocus="this.style.width='600px'">
+</TEXTAREA>
+</td>
+       <td id="ViewCell" bgcolor="#99ccff">
+<iframe id="viewFrame" title="viewFrame" style="width:550px;height:550px"></iframe>
+</td>
+</tr>
 </table>
-
 <script>
-// Global variables
-var testFrame = document.getElementById('viewFrame').contentWindow;
-var lastLoaded = "";
-var pubWin;
+<!--
 
-// Initialize the sample programs dropdown
-document.addEventListener('DOMContentLoaded', function() {
-    var samples = [
-        {id: "codeIntro", name: "Introduction"},
-        {id: "codeCalculations", name: "Calculations"},
-        {id: "codeSolve_Equations", name: "Solve Equations"},
-        {id: "codeSki_Trip", name: "Ski Trip"},
-        {id: "codeIf_Then", name: "If Then"},
-        {id: "codePassword_Logic", name: "Password Logic"},
-        {id: "codeDiscount_Logic", name: "Discount Logic"},
-        {id: "codeMice_Loops", name: "Mice Loops"},
-        {id: "codeMoney_Decisions", name: "Money Decisions"},
-        {id: "codeCommon_Factors", name: "Common Factors"},
-        {id: "codeMath_Values", name: "Math Values"},
-        {id: "codeCollatz_Sequence", name: "Collatz Sequence"},
-        {id: "codeTranslate_Strings", name: "Translate Strings"},
-        {id: "codeElapsed_Minutes", name: "Elapsed Minutes"},
-        {id: "codeDate_Validation", name: "Date Validation"},
-        {id: "codeAdd_Up_Numbers", name: "Add Up Numbers"},
-        {id: "codePrimes_Array", name: "Primes Array"},
-        {id: "codeBinary_Search", name: "Binary Search"},
-        {id: "codeSelection_Sort", name: "Selection Sort"},
-        {id: "codeBubble_Sort", name: "Bubble Sort"},
-        {id: "codeReverse_Array", name: "Reverse Array"},
-        {id: "codeFrequency_Distribution", name: "Frequency Distribution"},
-        {id: "codeAppointments_List", name: "Appointments List"},
-        {id: "codeFind_Duplicates", name: "Find Duplicates"},
-        {id: "codeCities_Array", name: "Cities Array"},
-        {id: "codeNames_Collection", name: "Names Collection"},
-        {id: "codeCheckout_Collection", name: "Checkout Collection"},
-        {id: "codeStack_Reverse_List", name: "Stack Reverse List"},
-        {id: "codeQueues_Merge", name: "Queues Merge"},
-        {id: "codeBank_Classes", name: "Bank Classes"},
-        {id: "codeMagic_Square", name: "Magic Square"}
-    ];
 
-    var select = document.getElementById('SamplesList');
-    samples.forEach(function(sample) {
-        var option = document.createElement('option');
-        option.value = sample.id;
-        option.textContent = sample.name;
-        select.appendChild(option);
-    });
+var acc = "it"
+var scripting = true
+var lastloaded = ""
+var pubwin 
 
-    // Set up event listeners
-    document.getElementById('tCode').addEventListener('keyup', updateLineNumber);
-    document.getElementById('tCode').addEventListener('click', updateLineNumber);
-    document.getElementById('SamplesList').addEventListener('change', function() {
-        loadSample(this.value);
-    });
-
-    // Load the intro by default
-    loadSample("codeIntro");
-});
-
-// Helper functions
-function updateLineNumber() {
-    var textarea = document.getElementById('tCode');
-    var indicator = document.getElementById('lineNumberBox');
-    indicator.textContent = textarea.value.substr(0, textarea.selectionStart).split("\n").length;
+function progNames()
+{
+   var proglist = "";
+   var allprogs = document.cookie.split(";");
+   for (var c=0;c<allprogs.length;c++)
+   {
+      var eq = allprogs[c].indexOf("=")
+      if (eq>=0)
+      {  proglist = proglist + allprogs[c].substring(0,eq) + "     "  }
+      if (c==2) {proglist = proglist + "\n    "}
+   }
+   return proglist
 }
 
-function clearTestFrame() {
-    testFrame.document.open();
-    testFrame.document.write("<html><body></body></html>");
-    testFrame.document.close();
+function saveProgram()
+{
+   var progname = prompt("Program Name","program")
+   Set_Cookie(progname,tCode.value,10)
 }
 
-// Program storage using localStorage
-function saveProgram() {
-    var progname = prompt("Program Name", "program");
-    if (progname) {
-        localStorage.setItem(progname, document.getElementById('tCode').value);
-    }
+function Set_Cookie( name, value, expires, path, domain, secure ) 
+{
+// set time, it's in milliseconds
+  var today = new Date();
+  today.setTime( today.getTime() );
+
+// if the expires variable is set, make the correct expires time, the current script below will  
+// set it for x number of days, to make it for hours, delete * 24, for minutes, delete * 60 * 24
+
+  if ( expires )
+  { expires = expires * 1000 * 60 * 60 * 24;  }
+  
+  var expires_date = new Date( today.getTime() + (expires) );
+
+  document.cookie = name + "=" +escape( value ) +
+  ( ( expires ) ? ";expires=" + expires_date.toGMTString() : "" ) + 
+  ( ( path ) ? ";path=" + path : "" ) + 
+  ( ( domain ) ? ";domain=" + domain : "" ) +
+  ( ( secure ) ? ";secure" : "" ) 
 }
 
-function loadProgram() {
-    var programs = [];
-    for (var i = 0; i < localStorage.length; i++) {
-        programs.push(localStorage.key(i));
-    }
-    
-    var progname = prompt("Type one of these program names:\n" + programs.join(", "), "program");
-    if (progname) {
-        var prog = localStorage.getItem(progname);
-        if (prog) {
-            document.getElementById('tCode').value = prog;
-        } else {
-            alert(progname + " was not found");
-        }
-    }
+function Get_Cookie( name ) {
+	
+   var start = document.cookie.indexOf( name + "=" );
+   var len = start + name.length + 1;
+   if ( ( !start ) &&
+   ( name != document.cookie.substring( 0, name.length ) ) )
+   {
+      return null;
+   }
+   if ( start == -1 ) return null;
+   var end = document.cookie.indexOf( ";", len );
+   if ( end == -1 ) end = document.cookie.length;
+   return unescape( document.cookie.substring( len, end ) );
 }
 
-// Sample program loader
-function loadSample(val) {
-    try {
-        var sample = document.getElementById(val).value;
-        if (sample) {
-            document.getElementById('tCode').value = sample;
-            lastLoaded = val;
-            document.getElementById('SamplesList').selectedIndex = 0;
-            clearTestFrame();
-        }
-    } catch(ex) {
-        // Ignore errors
-    }
+tCode.onkeyup = function()
+{
+   getLineNumber(tCode,lineNumberBox);
 }
 
-// Execution functions
-function test() {
-    var lines = getLines(document.getElementById('tCode').value);
-    run(lines, testFrame);
+tCode.onclick = function()
+{
+   getLineNumber(tCode,lineNumberBox);
 }
 
-function publish() {
-    var lines = getLines(document.getElementById('tCode').value);
-    runNewWindow(lines);
+function getLineNumber(textarea, indicator) {
+
+   indicator.innerHTML = textarea.value.substr(0, textarea.selectionStart).split("\n").length;
 }
 
-function getLines(code) {
-    return code.split("\n").map(function(line) {
-        return line.trim();
-    });
+function loadProgram()
+{  var progname = prompt("Type one of these program names:     "+progNames(),"program")
+
+   var prog = Get_Cookie(progname) 
+   if (prog)
+   {  tCode.value = prog 
+      // test() 
+   }
+   else
+   {  alert(progname + " was not found") }
 }
 
-function run(lines, frame) {
-    var prog = "<html><head><script>" + getLibraryCode() + "</script></head><body bgcolor=#ffffff><script>\n";
-    
-    for (var c = 0; c < lines.length; c++) {
-        prog += translate(lines[c]) + "\n";
-    }
-    
-    prog += "</script>\n</body></html>";
-    
-    try {
-        frame.document.open();
-        frame.document.write(prog);
-        frame.document.close();
-    } catch (exc) {
-        clearTestFrame();
-    }
+function warnHard()
+{
+   if (cHard.checked == true)
+   {
+      alert('** Warning **\n' +
+             'You have disabled Easy Codes - \n' +
+             'You must now write everything using\n' +
+             'STANDARD HTML and JavaScript\n' +
+             'with NO HELP form EasyCodes.\n' +
+             'We recommend un-checking this box.')
+   }
 }
 
-function runNewWindow(lines) {
-    var prog = "<html><head><script>" + getLibraryCode() + "</script></head><body bgcolor=#ffffff><script>";
-    
-    for (var c = 0; c < lines.length; c++) {
-        prog += translate(lines[c]) + "\n";
-    }
-    
-    prog += "</script>\n</body></html>";
-    
-    pubWin = window.open("", "_blank");
-    pubWin.document.open();
-    pubWin.document.write(prog);
-    pubWin.document.close();
+function loadSample(val)
+{ 
+   try
+   {  tCode.value = eval(val+'.value')
+      // test();
+      lastloaded = val
+      SamplesList.selectedIndex = 0
+      tCode.style.width = "600px"
+      clearTestFrame(testFrame)      
+   }   
+   catch(exc)
+   {   }   
 }
 
-// Pseudocode to JavaScript translator
-function translate(line) {
-    line = line.replace(/ mod /g, " % ");
-
-    var lin = line.trim();
-    var sp = lin.indexOf(" ");
-    var first = "";
-    
-    if (lin.startsWith("if")) {
-        first = "if";
-    } else if (lin.startsWith("else if")) {
-        first = "else if";
-    } else if (lin.startsWith("else")) {
-        first = "else";
-    } else if (lin.startsWith("loop while")) {
-        first = "loop while";
-    } else if (lin.startsWith("loop for")) {
-        first = "loop for";
-    } else if (lin.startsWith("loop until")) {
-        first = "loop until";
-    } else if (lin.startsWith("loop ")) {
-        first = "loop";
-    } else if (lin.startsWith("output")) {
-        first = "output";
-    } else if (lin.startsWith("method ")) {
-        first = "method";
-    } else if (lin.startsWith("Class ")) {
-        first = "class";
-    } else if (lin.startsWith("input")) {
-        first = "input";
-    } else {
-        if (sp >= 0) { first = lin.substring(0, sp); }
-    }
-
-    if (first == "if" || first == "else if") {
-        line = line.replace("if ", "if(");
-        if (first == "else if") { line = line.replace("else if", "}else if"); }
-        line = line.replace(" then", "){");
-        line = line.replace(/ AND /g, " && ");
-        line = line.replace(/ OR /g, " || ");
-        line = line.replace(/NOT/g, "!");
-        line = line.replace(/<>/g, "!=");
-        line = line.replace(/ = /g, " == ");
-    }
-    
-    if (first == "else") {
-        line = line.replace("else", "}else{");
-    }
-    
-    if (first == "loop while") {
-        line = line.replace("loop while", "while(") + "){";
-        line = line.replace(/ AND /g, " && ");
-        line = line.replace(/ OR /g, " || ");
-        line = line.replace(/NOT/g, "!");
-        line = line.replace(/<>/g, "!=");
-        line = line.replace(/ = /g, " == ");
-    }
-    
-    if (first == "loop for") {
-        var v = line.indexOf("loop for") + 9;
-        var ve = line.indexOf(" ", v);
-        var vname = line.substring(v, ve);
-
-        var vs = line.indexOf(" from ") + 6;
-        var vt = line.indexOf(" to ");
-        var vstart = line.substring(vs, vt);
-
-        var vend = line.substring(vt + 4);
-
-        line = "for(" + vname + "=" + vstart + ";" + vname + "<=" + vend + ";" + vname + "++){";
-    }
-    
-    if (first == "loop until") {
-        line = line.replace("loop until", "while(!(") + ")){";
-        line = line.replace(/ AND /g, " && ");
-        line = line.replace(/ OR /g, " || ");
-        line = line.replace(/NOT/g, "!");
-        line = line.replace(/<>/g, "!=");
-        line = line.replace(/ = /g, " == ");
-    }
-    
-    if (first == "loop") {
-        var v = line.indexOf("loop") + 5;
-        var ve = line.indexOf(" ", v);
-        var vname = line.substring(v, ve);
-
-        var vs = line.indexOf(" from ") + 6;
-        var vt = line.indexOf(" to ");
-        var vstart = line.substring(vs, vt);
-
-        var vend = line.substring(vt + 4);
-
-        line = "for(" + vname + "=" + vstart + ";" + vname + "<=" + vend + ";" + vname + "++){";
-    }
-    
-    if (first == "end") {
-        line = "}";
-    }
-    
-    if (first == "output") {
-        var t = line.indexOf("output") + 6;
-        line = "output(" + line.substring(t) + ")";
-    }
-    
-    if (first == "input") {
-        var v = line.indexOf("input") + 6;
-        var name = line.substring(v);
-        line = name + " = input(\"" + name + "\")";
-    }
-    
-    if (first == "method") {
-        line = line.replace(/method/, "function") + "{";
-    }
-    
-    if (first == "class") {
-        line = line.replace(/Class/, "function") + "{";
-    }
-
-    return line;
+function showHints()
+{
+   try{
+   var sample = lastloaded
+   var hintBox = "hints" + sample;
+   var lines = getLines(document.getElementById(hintBox).value)
+   var newWin = window.open("about:blank",hintBox,"width=400,height=650,left=600,top=40,scrollbars=yes,resizable=yes")
+   run(lines,newWin)
+   newWin.document.title = hintBox
+   newWin.focus()
+   }
+   catch (exc) {alert("Could not find Hints page for " + sample.substring(4))}
 }
 
-// Library functions that would normally be in library.js
-function getLibraryCode() {
-    return `
-        function output() {
-            var args = Array.prototype.slice.call(arguments);
-            var output = args.join(" ");
-            document.write(output + "<br>");
-            console.log(output);
-        }
-        
-        function input(promptText) {
-            return window.prompt(promptText || "Enter value", "");
-        }
-        
-        // Collection class
-        function Collection() {
-            this.items = [];
-            this.index = 0;
-            
-            this.addItem = function(item) {
-                this.items.push(item);
-            };
-            
-            this.remove = function(item) {
-                var idx = this.items.indexOf(item);
-                if (idx >= 0) this.items.splice(idx, 1);
-            };
-            
-            this.contains = function(item) {
-                return this.items.includes(item);
-            };
-            
-            this.resetNext = function() {
-                this.index = 0;
-            };
-            
-            this.hasNext = function() {
-                return this.index < this.items.length;
-            };
-            
-            this.getNext = function() {
-                return this.items[this.index++];
-            };
-        }
-        
-        // Stack class
-        function Stack() {
-            this.items = [];
-            
-            this.push = function(item) {
-                this.items.push(item);
-            };
-            
-            this.pop = function() {
-                return this.items.pop();
-            };
-            
-            this.isEmpty = function() {
-                return this.items.length === 0;
-            };
-        }
-        
-        // Queue class
-        function Queue() {
-            this.items = [];
-            
-            this.enqueue = function(item) {
-                this.items.push(item);
-            };
-            
-            this.dequeue = function() {
-                return this.items.shift();
-            };
-            
-            this.isEmpty = function() {
-                return this.items.length === 0;
-            };
-        }
-        
-        // Helper for binary search
-        function div(a, b) {
-            return Math.floor(a / b);
-        }
-    `;
+function showHelp(val)
+{  
+   if (val != "*")
+   { var win=window.open("help"+val+".htm","EasyCodeHelp","");
+     win.focus();
+   }
 }
 
-// Sample programs
-var samples = {
-    codeIntro: `output "Welcome"
+function publish()
+{
+   var lines = getLines(tCode.value)
+   runNewWindow(lines) 
+}
+
+function test()
+{  
+   tCode.style.width="400px"
+   var lines = getLines(tCode.value)
+   testFrame = frames[0]
+   run(lines,testFrame)
+}   
+
+function clearTestFrame(frameName)
+{
+   testFrame.location = "about:blank"
+}
+
+function run(lines,frameName)
+{  scripting = true
+   var prog = "<html><head><script src='library.js'></script></head><body bgcolor=#ffffff><script>\n"
+   for(c=0;c<lines.length;c++)
+   {  prog = prog + translate(lines[c]) + "\n"}
+   if (!scripting) { prog = prog + "<script>" }
+   prog = prog+"</script>\n</body></html>"
+   try
+   { frameName.document.open();
+     frameName.document.write(prog);   
+     frameName.document.close();
+   }
+   catch (exc)
+   { clearTestFrame(frameName)
+     
+   }
+}
+
+function runNewWindow(lines,title)
+{  scripting = false
+   var prog = "<html><head><script src='library.js'></script></head></head><body bgcolor=#ffffff><script>"
+   for(c=0;c<lines.length;c++)
+   {  prog = prog + translate(lines[c]) + "\n"}
+   //if (!scripting) { prog = prog + "<script>" }
+   prog = prog+  "</script>\n</body></html>"
+   try
+   { pubwin = window.open("","_blank");
+     pubwin.document.open();  
+     pubwin.document.write(prog);   
+     pubwin.document.close();
+   }
+   catch (exc)
+   {   }
+}
+
+function translate(line)
+{
+  line=line.replace(/ mod /g," % ")
+
+  var lin = line.trim();
+  var sp = lin.indexOf(" ");
+  var first = "";
+  if(startswith(lin,"if"))
+  { first = "if" }
+  else if(startswith(lin,"else if") )
+  { first = "else if" }
+  else if(startswith(lin,"else") )
+  { first = "else" }
+  else if(startswith(lin,"loop while"))
+  { first = "loop while" }
+  else if(startswith(lin,"loop for"))
+  { first = "loop for" }
+  else if(startswith(lin,"loop until"))
+  { first = "loop until" }
+  else if(startswith(lin,"loop "))
+  { first = "loop" }
+  else if(startswith(lin,"output"))
+  { first = "output" }
+  else if(startswith(lin,"method "))
+  { first = "method" }
+  else if(startswith(lin,"Class "))
+  { first = "class"}
+  else if(startswith(lin,"input"))
+  { first = "input" }
+  else
+  {
+    if(sp>=0) { first = lin.substring(0,sp); }
+  }
+  if(first=="if" || first=="else if")
+  {
+    line=line.replace("if ","if(");
+    if(first=="else if"){ line = line.replace("else if","}else if") }
+    line=line.replace(" then","){");
+    line=line.replace(/ AND /g," && ");
+    line=line.replace(/ OR /g," || ");
+
+    line=line.replace(/NOT/g,"!");
+    line=line.replace(/<>/g,"!=");
+    line=line.replace(/ = /g," == ")
+  }
+  if(first=="else")
+  { line=line.replace("else","}else{") }
+  if(first=="loop while")
+  {
+    line=line.replace("loop while","while(") + "){";
+    line=line.replace(/ AND /g," && ");
+    line=line.replace(/ OR /g," || ");
+
+    line=line.replace(/NOT/g,"!");
+    line=line.replace(/<>/g,"!=");
+    line=line.replace(/ = /g," == ")  
+  }
+  if(first=="loop for")
+  {
+    var v = line.indexOf("loop for")+9;
+    var ve= line.indexOf(" ",v);
+    var vname = line.substring(v,ve);
+
+    var vs = line.indexOf(" from ")+6;
+    var vt = line.indexOf(" to ");
+    var vstart = line.substring(vs,vt);
+
+    var vend = line.substring(vt+4);
+
+    line = "for("+vname+"="+vstart+";"+vname+"<="+vend+";"+vname+"++){"
+    
+  }
+  if(first=="loop until")
+  {
+    line=line.replace("loop until","while(!(") + ")){";
+    line=line.replace(/ AND /g," && ");
+    line=line.replace(/ OR /g," || ");
+
+    line=line.replace(/NOT/g,"!");
+    line=line.replace(/<>/g,"!=");
+    line=line.replace(/ = /g," == ") 
+  }
+  if(first=="loop")
+  {
+    var v = line.indexOf("loop")+5;
+    var ve= line.indexOf(" ",v);
+    var vname = line.substring(v,ve);
+
+    var vs = line.indexOf(" from ")+6;
+    var vt = line.indexOf(" to ");
+    var vstart = line.substring(vs,vt);
+
+    var vend = line.substring(vt+4);
+
+    line = "for("+vname+"="+vstart+";"+vname+"<="+vend+";"+vname+"++){" 
+  
+  }
+  if(first=="end")
+  { line = "}"; }
+  if(first=="output")
+  {  var t = line.indexOf("output")+6
+     line = "output("+line.substring(t)+")"
+  }
+  if(first=="input")
+  {
+     var v = line.indexOf("input")+6
+     var name = line.substring(v)
+     line = name + " = input(\"" + name + "\")" 
+  }
+  if(first == "method")
+  {
+     line = line.replace(/method/,"function") + "{"
+  }
+  
+  if(first == "class")
+  {
+     line = line.replace(/Class/,"function") + "{"
+  }  
+ 
+  return line
+}
+
+
+function startswith(whole,part)
+{
+   var n = part.length
+   if(whole.substring(0,n)==part)
+   {
+      return true
+   }
+   else
+   {  return false }
+}
+
+function getValue(id)
+{
+   var ans = id
+   try
+   { if (id.value)
+     {ans = id.value}
+     else
+     {ans = id      }
+   }   
+   catch (exc)
+   {  ans = id  }
+   return ans
+}
+
+function trim(s)
+{
+   var b = 0
+   var e = s.length
+   while (e>0 && s.charAt(e-1)<=' '){ e-- }
+   while (b<e && s.charAt(b)<=' '){ b++ }
+   return s.substring(b,e)   
+}
+
+function getLines(code)
+{
+   var lines = code.split("\n")
+   for (c=0;c<lines.length;c++)
+   {  lines[c] = trim(lines[c])  }
+   
+   return lines
+}
+
+function killWhiteSpace(s)
+{
+   return s.replace(/\s/g,"")
+}
+
+function onlySpaces(s)
+{
+   return s.replace(/\S/g," ")
+}
+
+function htmlFormat(s)
+{ 
+   s = s.replace(/`/g," &nbsp;")
+
+   s = replacePairs(s,"''","''","<b>","</b>")
+   
+   s = replacePairs(s,",,",",,","<i>","</i>")
+   
+   var ap = s.indexOf("~")
+   while (ap>=0)
+   {
+      var bp = s.indexOf("~",ap+1)
+      
+      var ad = s.substring(ap+1,bp)
+      s = s.replace("~","<a href='")
+      
+      s = s.replace("~","'>"+ad+"</a>")
+      ap = s.indexOf("~")
+   }
+   return s
+}
+
+function replacePairs(s,a,b,ar,br)
+{
+   var p = s.indexOf(a)
+   while(p >= 0)
+   {
+      s = s.substring(0,p) + ar + s.substring(p+a.length)
+      p = s.indexOf(b)
+      if (p < 0) 
+      {  s = s + br }
+      else
+      {  s = s.substring(0,p) + br + s.substring(p+b.length) }
+      p = s.indexOf(a)
+   }
+   return s
+}
+
+testFrame = frames[0]
+//-->
+</script>
+<textarea id="codeIntro" style="display:none">
+
+output "Welcome"
 loop COUNT from 1 to 5
   output COUNT
 end loop
@@ -483,9 +466,11 @@ end loop
 // a bad variable name, as it will translate to !HING.
 // Suggestions for improvement are welcome - 
 // send an eMail to the author at  Dave_Mulkey@fis.edu 
-// ==============================================`,
-    
-    codeCalculations: `output "=== Simple Calculations ==="
+// ==============================================
+</textarea>
+
+<textarea id="codeCalculations" style="display:none">
+output "=== Simple Calculations ==="
 
 output "Adding 1...10 = " , 1+2+3+4+5+6+7+8+9+10
 
@@ -509,9 +494,96 @@ output "Another error = " , 1/2 + 1/3 + 1/6
 
 output "One more problem = " , 0.1+0.1+0.1+0.1+0.1+0.1+0.1+0.1
 
-output "And another problem = " , 3.2 - 0.3`,
+output "And another problem = " , 3.2 - 0.3
+</textarea>
 
-    codeIf_Then: `//*** INPUT, IF..THEN.. , and STRINGS ********************
+<textarea id="codeSolve_Equations" style="display:none">
+//=== Variables ===
+//  We can use computers to solve equations, like :
+//
+//     x^2 - 8x + 12 = 0          (x^2 means x squared)
+//
+//  The simplest approach is "guess and check" -
+//   the user guesses a value for the solution,
+//   then the computer calculates the value of the formula, e.g.:
+//      X = 4
+//      Y = X*X - 8*X + 12  
+//      output  Y     ===>   -4
+//
+//   Now the user needs to make a different guess, like:
+//      X = 5
+//      Y = X*X - 8*X + 12  
+//      output  Y     ===>   -3
+//
+//  Finally :
+//      X = 6
+//      Y = X*X - 8*X + 1  ===>   0
+//
+//  So  X = 6  is the solution.
+//
+// By using VARIABLES for X and Y, it's easy to change the X-value
+// and have it changed automatically in the formula.
+//
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+//  Now try to solve this equation :
+//      x^2 - 9x + 14 = 0
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+X = 4
+Y = X*X - 9*X + 14
+output "x = " , X , " ....  y = " , Y
+</textarea>
+
+<textarea id="codeSolving2" style="display:none">
+// Here is another problem to solve by using VARIABLES and GUESS-CHECK
+//
+//   Find 2 numbers that add up to 65, and multiply to equal 1000.
+//
+
+A = 10
+B = 100
+output "Sum = " , A + B
+output "Product = " , A * B
+</textarea>
+
+<textarea id="codeSki_Trip" style="display:none">
+// **** Ski Trip ************************************************
+// Memorial High School is planning a ski trip for 188 students.
+// They have some choices for transportation and lodging:
+//
+// - Transportation - They can use busses that each carry 20 students
+//   Each bus costs 1000 Euros to drive. Each car carries 4 students
+//   and costs 250 Euros to drive.
+//
+// - Lodging - A hotel room costs 300 Euros and accommodates 4 students.
+//   A ski lodge room costs 800 Euros and accommodates 12 students.
+//
+// They can use a mixture of cars and busses, as well as a mixture
+// of hotel rooms and youth hostel rooms.  The trip committee can change 
+// the numbers of cars, busses, hotel rooms and lodges until they find
+// a solution with enough seats and beds, but at minimum cost.
+// **************************************************************/
+
+ CARS = 8
+ BUSSES = 8
+ HOTEL = 10
+ LODGE = 12
+ SEATS = CARS*4 + BUSSES*20
+ BEDS = HOTEL*4 + LODGE*12
+ COST = CARS*250 + BUSSES*1000 + HOTEL*300 + LODGE*800
+
+ output CARS , " cars  and  " , BUSSES , " busses = " , SEATS , " seats"
+ output HOTEL , " rooms and " , LODGE , " lodges = " , BEDS , " beds"
+ output "Total cost = " , COST
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// By trying different values for CARS and BUSSES and HOTEL and LODGE,
+// plan the cheapest possible trip for 188 students.
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</textarea>
+
+<textarea id="codeIf_Then" style="display:none">
+//*** INPUT, IF..THEN.. , and STRINGS ********************
 //
 // Lucy has trouble remembering things like: 1 km = 0.6 miles
 // She wants to make a program that pops-up conversion factors.
@@ -539,17 +611,895 @@ output "And another problem = " , 3.2 - 0.3`,
      output "1 liter = 1000 ml = 1/3 gallon"
      output "Don't forget that IMPERIAL GALLONS"
      output "are different than US GALLONS"
-  end if`
-};
+  end if
+      
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Add a few more conversion facts -
+// maybe some money values, like  1 BP = 1.3 EUROS
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+//==========================================
+// INPUT - the input command makes a box pop-up on the screen,
+//         waits for the user to type an answer,
+//         and then stores the answer in a variable (UNIT).
+//
+// IF..THEN.. - checks whether UNIT matches a specific value.
+//         If so, the program executes the command(s) between then..end if
+//         Notice that the user is going to type letters, not numbers,
+//         so you need "quotation marks" around the matching STRING.
+//
+// STRING - a STRING is a value that contains letters and maybe
+//         numbers and punctuation marks -
+//         e.g. any characters on a keyboard.
+//==========================================  
+</textarea>
 
-// Add sample programs to hidden textareas
-Object.keys(samples).forEach(function(key) {
-    var ta = document.createElement('textarea');
-    ta.id = key;
-    ta.style.display = 'none';
-    ta.value = samples[key];
-    document.body.appendChild(ta);
-});
+<textarea id="codePassword_Logic" style="display:none">
+// --- LOGIC ---
+// The computer can perform more complex LOGIC
+// by using BOOLEAN OPERATORS like AND and OR.
+// For example, consider the problem of inputting a user name and password.
+// Both the account name and the password must be correct.
+// So the NAME AND PASSWORD must be correct.
+// This example program shows how to use AND / OR correctly.
+
+ NAME = input("Type your user name")
+ PASSWORD = input("Type your password")
+
+ if  NAME = "bozo"  AND  PASSWORD = "clown"  then
+    output "Correct!"
+ end if
+
+ if  NAME = "einstein"  AND  PASSWORD = "e=mc2"  then
+    output "Correct!"
+ end if 
+
+ if  NAME = "guest"  OR  NAME = "trial"  then
+    output "You will be logged in as a GUEST"
+ end if
+</textarea>
+
+<textarea id="codeDiscount_Logic" style="display:none">
+// === More Logic =================================
+// Computers can do straightforward calculations, as well as complicated formulas.
+// But that is not the most interesting thing.
+//
+// Computers can also perform LOGICAL operations, meaning that they
+// can do COMPUTATIONS involving calculations PLUS making LOGICAL decisions.
+//
+// Logical decisions can be relatively simple, like deciding whether
+// a number is larger or smaller than 50.  Other decisions are very complex,
+// like deciding whether an IB student's test scores qualify
+// for awarding an IB Diploma or not.  There are lots and lots of
+// rules for an IB Diploma, so it requires lots and lots of if..then commands. 
+//-----------------------------------------------
+// Here is a common example - where the price of buying items changes
+// if you buy a larger quantity - called a QUANTITY DISCOUNT.
+//-----------------------------------------------
+
+ QUANTITY = input("How many hamburgers do you want?")
+ 
+ if  QUANTITY >= 10  then
+   PRICE = 2.59
+ else if  QUANTITY <= 9  AND  QUANTITY >= 5  then
+   PRICE = 2.89
+ else if  QUANTITY < 5  then
+   PRICE = 3.25
+ end if
+
+ output "That costs " , PRICE , " per burger"
+ output "Total cost = " , PRICE * QUANTITY , " for " , QUANTITY , " burgers"
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// (1) READ the program above and PREDICT what it will print for each of these:
+//       1 hamburger ,  6 hamburgers , 12 hamburgers
+//
+// (2) After making your predictions, run the program and check your answers.
+//
+// (3) Check what it costs for 9 hamburgers and 10 hamburgers.
+//     Explain why this is a problem.  Suggest how this can be fixed.
+//
+// (4) On an IB exam, the following grade boundaries are used:
+//       70 or above = grade 7
+//       60 to 69  =   grade 6
+//       50 to 59  =   grade 5
+//       40 to 49  =   grade 4
+//       30 to 39  =   grade 3
+//       20 to 29  =   grade 2
+//        0 to 19  =   grade 1
+//     Write a program that inputs the raw score (e.g. 65)
+//     and outputs the corresponding grade (e.g. 6)
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</textarea>
+
+<textarea id="codeMice_Loops" style="display:none">
+// === Mice ============
+//  JavaScript has loops, including for loops
+//  like Java and Basic and other languages.
+//  This example uses loops for a poem.
+
+loop A from 1 to 2
+   output "Three blind mice"
+end loop
+
+loop B from 3 to 4
+   output "See how they run"
+end loop
+
+output "They all ran up to the farmer's wife"
+output "She cut off their tails with a carving knife"
+output "Did you ever see such a sight in your life, as"
+
+C = 5
+loop while C < 20
+   output "Three blind mice"
+   C = C*2
+end loop
+
+</textarea>
+
+
+<textarea id="codeMoney_Decisions" style="display:none">
+// === Money ====================================
+//
+// This program converts money from EUROS into
+// several other currencies. Then it uses IF commands
+// to make some decisions.
+// ==============================================
+
+EUROS = 50.00
+
+POUNDS = 0.8*EUROS
+
+DOLLARS = EUROS / 0.75
+
+YEN = EUROS * 90
+
+output EUROS , " EUR"
+
+output YEN , " Yen"
+
+if YEN > 1000 then
+   output "That is a lot of Yen"
+end if
+
+output POUNDS , " BP"
+
+if POUNDS < 100 then
+   output "That is a small number of Pounds"
+end if
+
+output "$" , DOLLARS
+
+if DOLLARS = 100 then
+   output "BINGO"
+end if 
+  
+</textarea>
+
+<textarea id="codeCommon_Factors" style="display:none">
+//==== Common Factors ===============================
+// This program prints all the common factors of A and B.
+// This would be useful for reducing fractions.
+// ==================================================
+
+A = 28
+B = 42
+
+output "Common factors of " , A , " and " , B
+
+loop C from 1 to B
+    if (A mod C = 0) AND (B mod C = 0) then
+       output C
+    end if
+end loop	
+</textarea>	
+
+<textarea id="codeMath_Values" style="display:none">
+// === Table of Values for Math Function ===
+// This program uses a simple loop to produce a table
+// of x,y values for a math function.
+// Notice that the LOOP FOR command can only count by 1,
+// so the program divides by 2 to count by 0.5 each time.
+// Dividing by 2 only works if you divide by 2.0,
+// because C / 2 would do integer division, ignoring
+// the fractional result.
+
+output "X , Y"
+
+loop C from 0 to 10
+   X = C / 2.0
+   Y = 3*X*X - 7*X + 2
+   output X , " , " , Y    
+end loop
+
+</textarea>
+
+<textarea id="codeCollatz_Sequence" style="display:none">
+//=== Collatz Sequence ==========================
+//  Start with any integer.
+//  If it's even, divide by 2.
+//  If it's odd, multiply by 3 and add 1.
+//  This produces a sequence of numbers that can continue
+//  quite a long time.  If it ever hits a power of 2,
+//  it falls back down to 1 and ends in a loop 4,2,1,4,2,1
+//  It is believed that every number eventually returns to 1,
+//  but this has not been proven.
+// ==============================================
+
+NUM = 29
+
+loop until NUM = 1
+  
+   output NUM
+
+   if NUM mod 2 = 0 then
+      NUM = NUM / 2
+   else
+      NUM = NUM * 3 + 1
+   end if
+
+end loop
+
+output NUM
+
+</textarea>
+
+<textarea id="codeTranslate_Strings" style="display:none">
+// === Translate ================================
+//
+// This program knows a few German words.  
+// If you choose an English word from the list, 
+// it will tell you the matching German word.
+//
+// It knows the following words in German:
+//  hello  goodbye  stop
+// ==============================================
+
+  input ENGLISH
+
+  if ENGLISH = "hello" then
+     GERMAN = "guten Tag" 
+  else if ENGLISH = "goodbye" then
+     GERMAN = "auf Wiedersehen" 
+  else if ENGLISH = "stop" then
+     GERMAN = "halt" 
+  else
+     GERMAN = "???" 
+  end if
+  
+  output "English = " , ENGLISH
+  output "German = " , GERMAN
+
+</textarea>
+
+<textarea id="codeElapsed_Minutes" style="display:none">
+//=== Elapsed Minutes ===========================
+// This program inputs a STARTING time and a FINISH time.
+// Then it calculates the number of elapsed minutes
+// between those two times.  For example:
+//    START_HOURS = 8
+//  START_MINUTES = 30
+//     END_HOURS  = 10
+//   END_MINUTES  = 10   
+//  MINUTES = (10-8)*60 + (10-30) = 100
+// ==============================================
+
+  input START_HOURS
+  input START_MINUTES
+
+  input END_HOURS
+  input END_MINUTES  
+
+  if START_HOURS > 23 OR START_MINUTES > 59 then
+     output "Start time is not valid"
+  else if END_HOURS > 23 OR END_MINUTES > 59 then
+     output "Times are not valid"
+  else
+     MINUTES = (END_HOURS - START_HOURS)*60 + (END_MINUTES-START_MINUTES)
+     output "Elapsed time = " , MINUTES , " minutes"
+  end loop
+
+</textarea>
+
+<textarea id="codeDate_Validation" style="display:none">
+//==== Date Validation ==========================
+// This code inputs a date, using numbers for months,
+// and decides whether the date is VALID or not.
+// ==============================================
+
+input MONTH
+input DAY
+input YEAR
+
+output MONTH , "/" , DAY , "/" , YEAR
+
+if YEAR mod 4 = 0 then
+   FEBMAX = 29
+else
+   FEBMAX = 28
+end if
+
+M = MONTH
+D = DAY
+
+if M < 1 OR M > 12 then
+    output "Month is not valid"
+else if D < 1 OR D > 31 then
+    output "Day is not valid"
+else if D = 31 AND (M = 4 OR M = 6 OR M = 9 OR M = 11) then
+    output "That month does not have 31 days"
+else if M = 2 AND D > FEBMAX then
+    output "February only has " , FEBMAX , " days"
+else
+    output "Date is valid"
+end if 
+</textarea>
+
+<textarea id="codeAdd_Up_Numbers" style="display:none">
+//==== Adding Up Numbers =========================
+// This program adds up a lot of numbers :
+//  1 + 2 + 3 + ... + max
+// ===============================================
+
+MAX = 10
+
+SUM = 0
+
+loop COUNT from 0 to MAX	
+    output COUNT
+    SUM = SUM + COUNT
+end loop	
+
+output "Total = " , SUM
+</textarea>
+
+
+<textarea id="codePrimes_Array" style="display:none">
+// ==== Arrays ==================================
+//
+// Arrays work just like Java and C++,
+// except that they can contain any data type.
+// This program uses the Sieve of Eratosthenes
+// to produce a list of PRIMES below 100.
+// ==============================================
+
+NUMS = new Array()
+
+loop N from 1 to 100
+   NUMS[N] = 0
+end loop
+
+loop P from 2 to 50
+   N = P * 2
+   loop while N <= 100
+      NUMS[N] = 1
+      N = N + P
+   end loop
+end loop
+
+output "These are the PRIME numbers under 100"
+
+loop N from 2 to 100
+   if NUMS[N] = 0 then
+      output N
+   end if
+end loop
+</textarea>
+
+<textarea id="codeBinary_Search" style="display:none">
+//==== Binary Search ============================
+// This program uses a Binary Search algorithm to search
+// for an ID number, and then prints the corresponding name.
+// Notice that div does not work properly in this tool,
+// so Math.floor is used to truncate the average of LOW and HIGH.
+// ==============================================
+
+ID = [1001,1002,1050,1100,1120,1180,1200,1400]
+NAME = ["Apple","Cherry","Peach","Banana","Fig","Grape","Olive","Mango"]
+
+output "Type the ID number that you wish to find"
+input TARGET
+
+LOW = 0
+HIGH = 7
+FOUND = -1
+
+loop while FOUND = -1 AND LOW <= HIGH
+  MID = div( LOW + HIGH , 2 )   // should be (LOW + HIGH) div 2
+                                // but (A div B) doesn't work correctly
+			        // so there is a special method below
+  if ID[MID] = TARGET then
+      FOUND = MID
+  else if TARGET < ID[MID] then
+      HIGH = MID - 1
+  else
+      LOW = MID + 1
+  end if
+end while
+
+if FOUND >= 0 then
+    output TARGET , ":" , NAME[FOUND]
+else
+    output TARGET , " was not found"
+end if
+</textarea>	
+
+<textarea id="codeSelection_Sort" style="display:none">
+//==== Selection Sort ===========================
+// This program demonstrates a 
+// standard Selection Sort algorithm.
+// ==============================================
+
+NUMS = [15,30,85,25,40,90,50,65,20,60]
+
+output "Before sorting"
+printNums()
+
+loop FIRST from 0 to 9
+    LEAST = FIRST
+    loop CURRENT from FIRST+1 to 9
+        if NUMS[CURRENT] > NUMS[LEAST] then
+           LEAST = CURRENT
+        end if
+    end loop	  
+    TEMP = NUMS[LEAST]
+    NUMS[LEAST] = NUMS[FIRST]
+    NUMS[FIRST] = TEMP
+end loop
+
+output "After sorting"
+printNums()
+
+method printNums()
+   loop C from 0 to 9
+      output NUMS[C]
+   end loop
+   output "========"
+end method
+
+</textarea>
+
+<textarea id="codeBubble_Sort" style="display:none">
+//==== Bubble Sort ==============================
+// This demonstrates a simple, inefficient Bubble Sort.
+// ==============================================
+
+NUMS = [15,30,85,25,40,90,50,65,20,60]
+
+output "Before sorting"
+loop C from 0 to 9
+   output NUMS[C]
+end loop
+
+output "========"
+
+loop PASS from 0 to 8
+    loop CURRENT from 0 to 8
+        if NUMS[CURRENT] < NUMS[CURRENT + 1] then
+          TEMP = NUMS[CURRENT]
+          NUMS[CURRENT] = NUMS[CURRENT+1]
+          NUMS[CURRENT+1] = TEMP
+        end if
+    end loop
+end loop
+
+output "After sorting"
+
+loop C from 0 to 9
+   output NUMS[C]
+end loop
+	  
+</textarea>
+
+<textarea id="codeReverse_Array" style="display:none">
+//==== Reverse Array ============================
+// This program is supposed to reverse the order
+// of the names in the array.  Trace the program
+// and predict what it will print after the
+// loop executes.
+// ==============================================
+
+NAMES = ["Robert","Boris","Brad","George","David"]
+
+N = 5     // the number of elements in the array
+K = 0     // this is the first index in the array
+
+loop while K < N - 1
+    TEMP = NAMES[K]
+    NAMES[K] = NAMES[N - K - 1]
+    NAMES[N - K - 1] = TEMP
+    K = K + 1
+end loop
+	
+loop C from 0 to N-1
+    output NAMES[C]
+end loop	
+</textarea>	
+
+<textarea id="codeFrequency_Distribution" style="display:none">
+//==== Frequency Distribution ====================
+// This program examines the values stored in an array.
+// It counts the values in each range : 0..9, 10..19, ...
+// ===============================================
+
+DATA = [17,20,23,29,33,42,60,61,75,75,90,99]
+FREQS = [0,0,0,0,0,0,0,0,0,0]
+
+loop C from 0 to 11
+    VALUE = DATA[C]
+    loop F from 0 to 9
+        if VALUE >= 10*F AND VALUE < 10*(F+1) then
+            FREQS[F] = FREQS[F] + 1
+        end if
+    end loop
+end loop
+
+output "Data"
+
+loop D from 0 to 11
+    output DATA[D]
+end loop
+
+output "Range : Frequency"
+
+loop F from 0 to 9
+    output F*10 , " - " , (F+1)*10 , " : " , FREQS[F] 
+end loop		
+</textarea>	
+
+<textarea id="codeAppointments_List" style="display:none">
+//==== Appointment List =========================
+// This program maintains a list of daily appointments in
+// an array. The secretary types the name of a student and then the time,
+// like this :  1215 for the time 12:15, or 850 for the time 8:50.
+// After each entry, the program prints a list of all appointments.
+// ==============================================
+
+APPS = new Array()
+NAME = ""
+
+loop T from 0 to 2400   
+    APPS[T] = ""                        
+end loop
+
+loop while NAME <> "quit"
+    input NAME                          
+    input TIME
+    if TIME >= 0 AND TIME <= 2359 then
+        APPS[TIME] = NAME
+    end if
+
+    loop T from 0 to 2400      
+       if APPS[T] <> "" then            
+           output T , " : " , APPS[T]
+       end if
+    end loop
+    output "=================="
+end loop
+</textarea>
+
+<textarea id="codeFind_Duplicates" style="display:none">
+//==== Checking Lists for Duplicates ====================
+// This program compares two lists, stored in Arrays,
+// checking for duplicate names that appear in both lists.
+// ====================================================== 
+
+TENNIS = ["Al","Bobby","Carla","Dave","Ellen"]
+BBALL = ["Lou","Dave","Hellen","Alan","Al"]
+
+output "The following appear in both lists"
+
+loop T from 0 to 4
+    loop B from 0 to 4
+        if TENNIS[T] = BBALL[B] then
+            output TENNIS[T]
+        end if
+    end loop
+end loop
+</textarea>	
+
+<textarea id="codeCities_Array" style="display:none">
+//==== Cities Array =============================
+// This program contains an array with a list of city names.
+// It counts and prints all the names that start with "D".
+// ==============================================
+
+CITIES = ["Athens","Berlin","Dallas","Denver","London","New York","Rome"]
+
+COUNT = 0
+
+loop C from 0 to 6
+    if firstLetter( CITIES[C] ) = "D" then
+      COUNT = COUNT + 1
+      output CITIES[C] 
+    end if
+end loop
+
+output "That was " , COUNT , " D-cities"
+
+method firstLetter(s)
+   return s.substring(0,1)
+end method	
+
+</textarea>
+
+<textarea id="codeNames_Collection" style="display:none">
+//==== Cities Collection =========================
+// This shows how to add names of students into 
+// a Collection, and then search the collection and
+// print all the student names that begin with "D".
+// It includes a METHOD that returns 
+// the first letter of a String.
+// ===============================================
+
+NAMES = new Collection()
+
+NAMES.addItem("Bob")
+NAMES.addItem("Dave")
+NAMES.addItem("Betty")
+NAMES.addItem("Kim")
+NAMES.addItem("Debbie")
+NAMES.addItem("Lucy")
+
+NAMES.resetNext()
+
+output "These names start with D"
+
+loop while NAMES.hasNext()
+    NAME = NAMES.getNext()
+    if firstLetter(NAME) = "D" then
+      output NAME
+    end if
+end loop
+
+method firstLetter(s)
+   return s.substring(0,1)
+end method	
+</textarea>
+
+<textarea id="codeCheckout_Collection" style="display:none">
+//==== Name List Collection =====================
+// This program inputs NAMES of students who are leaving
+// school early - for example to visit the doctor.
+// The names are collected in a Collection list.  
+// When a student returns, tying the same name again
+// removes that name from the list.  At the end of the day,
+// the secretary types "quit" to end the program and
+// see a list of all students who left but did not return.
+// ==============================================
+
+NAMES = new Collection()
+
+NAME = ""
+
+loop while NAME <> "quit"
+   input NAME
+   if NAME <> "quit" then
+       if NAMES.contains(NAME) then
+           output NAME , " returned"
+           NAMES.remove(NAME)
+       else
+           output NAME , " is leaving"
+           NAMES.addItem(NAME)
+       end if	   
+   end if
+end loop
+
+output "The following students left and did not return"
+
+NAMES.resetNext()
+
+loop while NAMES.hasNext()
+   output NAMES.getNext()
+end loop
+      	
+</textarea>
+
+<textarea id="codeStack_Reverse_List" style="display:none">
+//==== Stack Reverse List ============================
+// This program uses a Stack to reverse the names
+// that are stored in an array. This is admittedly
+// inefficient, but does demonstrate how a stack
+// can be used.
+// ===================================================
+
+NAMES = ["Alex","Bobby","Cho","Deke"]
+
+STACK = new Stack()
+
+loop COUNT from 0 to 3
+   STACK.push(NAMES[COUNT])
+end loop
+
+loop while NOT(STACK.isEmpty())
+   NAME = STACK.pop()
+   output NAME
+end loop   
+</textarea>
+
+<textarea id="codeQueues_Merge" style="display:none">
+//==== Queues Merge ============================
+// This algorithm uses 2 queues to MERGE the contents
+// of two lists - originally stored in arrays.
+// This assigns dogs to people - to go for a walk.
+// This is not the most efficient solution,
+// but does demonstrate how to use Queues.
+// =============================================
+
+PEOPLE = ["Alex","Bobby","Cho","Deke","Ellen"]
+DOGS = ["spot","woofie","bruiser"]
+
+PQ = new Queue()          // Queue for People names
+DQ = new Queue()          // Queue for dog names
+
+/////////////////////////// copy people names
+loop P from 0 to 4      
+   PQ.enqueue(PEOPLE[P])
+end loop  
+
+//////////////////////////// copy dog names
+loop D from 0 to 2      
+   DQ.enqueue(DOGS[D])
+end loop
+
+loop while NOT(PQ.isEmpty()) OR NOT(DQ.isEmpty())
+   if NOT(PQ.isEmpty()) then
+      output "Person = " , PQ.dequeue()
+   else
+      output "People list is empty"
+   end if
+
+   if NOT(DQ.isEmpty()) then
+      output "Dog = " , DQ.dequeue()
+   else
+      output "Dog list is empty"
+   end if
+end loop
+</textarea>
+
+<textarea id="codeBank_Classes" style="display:none">
+
+//=================================================
+// Bank accounts growing by
+// (1) simple payments
+// (2) percent interest
+//
+// This uses a CLASS to create OBJECTS
+// to represent each of the two accounts.
+//
+// Try increasing the number of years in the loop
+// to find out when the INTEREST account
+// overtakes the PAYMENT account
+//=================================================
+
+Class Account(name,amount)
+    this.id = name
+    this.balance = amount
+
+    this.addInterest = function(percent)
+    {
+       this.balance = this.balance + this.balance*percent/100
+    }
+
+    this.addMoney = function(money)
+    {
+       this.balance = this.balance + money
+    }
+
+    this.show = function()
+    {
+       output this.id + "  " + this.balance
+    }
+end Class
+
+PAYMENTS = new Account("Abbey",100.0)
+
+INTEREST = new Account("Pat",100.0)
+
+loop YEARS from 0 to 10
+    output "== Year : " + YEARS + " =="
+    PAYMENTS.show()
+    INTEREST.show()
+
+    PAYMENTS.addMoney(100)
+    INTEREST.addInterest(10)
+end loop
+
+</textarea>
+
+<textarea id="codeMagic_Square" style="display:none">
+A = [
+      [8,1,6] ,
+      [3,5,7] ,
+      [4,9,2]
+    ]
+
+OK = "correct"
+
+loop R from 0 to 2
+   output A[R][0] , " " , A[R][1] , " " , A[R][2]
+end loop
+
+loop R from 0 to 2
+   SUM = 0
+   loop C from 0 to 2
+      SUM = SUM + A[R][C]
+   end loop
+
+   if SUM != 15 then
+      output "Row " , R , " is wrong"
+      OK = "wrong"
+   end if
+end loop
+
+loop C from 0 to 2
+   SUM = 0
+   loop R from 0 to 2
+      SUM = SUM + A[R][C]
+   end loop
+
+   if SUM != 15 then
+      output "Column " , C , " is wrong"
+      OK = "wrong"
+   end if
+end loop
+
+SUM = 0
+loop X from 0 to 2
+   R = X
+   C = X
+   SUM = SUM + A[R][C]
+end loop
+
+if SUM != 15 then
+   output "Main diag is wrong"
+   OK = "wrong"
+end if
+
+SUM = 0
+loop X from 0 to 2
+   R = X
+   C = 2-X
+   SUM = SUM + A[R][C]
+end loop
+
+if SUM != 15 then
+   output "Other diag is wrong"
+   OK = "wrong"
+end if
+
+output "Entire square is " , OK   
+</textarea>	
+
+<script>
+
+var areas = document.getElementsByTagName("textarea")
+
+for (var c=0;c<areas.length;c++)
+{ if (areas[c].id.substring(0,4) == "code")
+  {
+     var elOptNew = document.createElement('option');
+     elOptNew.text = areas[c].id.substring(4);
+     elOptNew.value = areas[c].id;
+     var elSel = document.getElementById('SamplesList');
+
+     try {
+        elSel.add(elOptNew, null); // standards compliant; doesn't work in IE
+     }
+     catch(ex) {
+        elSel.add(elOptNew); // IE only
+     }
+   }
+}
+
+loadSample("codeIntro")
+
 </script>
-</body>
+
+</BODY>
+<script>
+
+testFrame = frames[0]
+</script>
 </html>
