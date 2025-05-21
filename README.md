@@ -2,7 +2,6 @@
 
 This repository is a collection of various web-based projects and experiments, apparently by Nataraj Atchula. Below is a summary of the main directories and their likely purposes:
 
-*   **`index.html` (Root File)**: This is a personal resume/CV for Nataraj Atchula, detailing their experience as an IB Design & Computer Science Teacher.
 *   **`3land/`**: Appears to be a landing page or a website template. It includes HTML, CSS (SCSS), JavaScript, and image assets.
 *   **`InstaApi/`**: Contains files suggesting an integration with an Instagram API, including HTML, CSS, and JavaScript.
 *   **`ar/`**: This folder is dedicated to Augmented Reality (AR) projects. It includes HTML files, JSON data, JavaScript libraries (like Three.js and AR.js), and AR marker files.
