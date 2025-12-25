@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutoring Manager</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- sql.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header-title {
+            color: #2c3e50;
+            font-weight: 700;
+        }
+        .header-subtitle {
+            color: #34495e;
+            font-weight: 400;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 12px 20px;
+        }
+        .nav-tabs .nav-link.active {
+            color: #495057;
+            background-color: transparent;
+            border-bottom: 3px solid #0d6efd;
+        }
+        .btn-primary {
+            background: #0d6efd;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+        }
+        .btn-outline-primary, .btn-outline-secondary, .btn-outline-danger {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .table thead {
+            background: #f8f9fa;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+        }
+        .action-buttons {
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="header-title display-4 mb-2">
+                <i class="bi bi-book-half text-primary"></i> Tutoring Manager
+            </h1>
+            <p class="header-subtitle lead">Track students, sessions, attendance & progress</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-center flex-wrap action-buttons mb-4">
+            <button id="exportBtn" class="btn btn-outline-primary me-2 mb-2">
+                <i class="bi bi-download"></i> Export Backup
+            </button>
+            <button id="importBtn" class="btn btn-outline-secondary me-2 mb-2">
+                <i class="bi bi-upload"></i> Import Backup
+            </button>
+            <button id="clearBtn" class="btn btn-outline-danger mb-2">
+                <i class="bi bi-trash"></i> Clear All Data
+            </button>
+            <input type="file" id="importFile" style="display:none" accept=".sqlite,.db">
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs justify-content-center mb-5" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button">
+                    <i class="bi bi-people"></i> Students
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sessions-tab" data-bs-toggle="tab" data-bs-target="#sessions" type="button">
+                    <i class="bi bi-calendar-event"></i> Sessions
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report" type="button">
+                    <i class="bi bi-graph-up"></i> Report
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Students Tab -->
+            <div class="tab-pane fade show active" id="students">
+                <div class="card p-4 mb-4">
+                    <h4 class="mb-4"><i class="bi bi-person-plus text-primary"></i> Add New Student</h4>
+                    <form id="studentForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control form-control-lg" id="studentName" placeholder="Student Name" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" class="form-control form-control-lg" id="studentGrade" placeholder="Grade" min="1" max="12" required>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="bi bi-plus-circle"></i> Add Student
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card p-4">
+                    <h4 class="mb-4"><i class="bi bi-list-ul"></i> Students List</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sessions Tab -->
+            <div class="tab-pane fade" id="sessions">
+                <div class="card p-4 mb-4">
+                    <h4 class="mb-4"><i class="bi bi-calendar-plus text-primary"></i> Schedule New Session</h4>
+                    <form id="sessionForm">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label">Student</label>
+                                <select class="form-select form-select-lg" id="sessionStudent" required></select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Date</label>
+                                <input type="date" class="form-control form-control-lg" id="sessionDate" required>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Duration (min)</label>
+                                <input type="number" class="form-control form-control-lg" id="sessionDuration" value="60" min="1" required>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="bi bi-plus-circle"></i> Add Session
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card p-4">
+                    <h4 class="mb-4"><i class="bi bi-journal-check"></i> Session Records</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Student</th>
+                                    <th>Date</th>
+                                    <th>Duration</th>
+                                    <th>Present</th>
+                                    <th>Notes</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sessionsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Tab -->
+            <div class="tab-pane fade" id="report">
+                <div class="card p-4">
+                    <h4 class="mb-4"><i class="bi bi-bar-chart-line text-primary"></i> Attendance Report</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Total Sessions</th>
+                                    <th>Attended</th>
+                                    <th>Attendance Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let db;
+
+        async function initDB() {
+            const SQL = await initSqlJs({
+                locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${file}`
+            });
+
+            const savedData = localStorage.getItem('tutoringDB');
+            if (savedData) {
+                try {
+                    const dataArray = JSON.parse(savedData);
+                    const data = new Uint8Array(dataArray);
+                    db = new SQL.Database(data);
+                } catch (e) {
+                    console.error("Failed to load saved database:", e);
+                    db = new SQL.Database();
+                }
+            } else {
+                db = new SQL.Database();
+            }
+
+            createTables();
+            loadData();
+        }
+
+        function createTables() {
+            db.run(`
+                CREATE TABLE IF NOT EXISTS students (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    grade INTEGER NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sessions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    student_id INTEGER,
+                    date TEXT,
+                    duration INTEGER,
+                    present INTEGER DEFAULT 0,
+                    notes TEXT,
+                    FOREIGN KEY(student_id) REFERENCES students(id)
+                );
+            `);
+        }
+
+        function saveToLocalStorage() {
+            const data = db.export();
+            const dataArray = Array.from(data);
+            localStorage.setItem('tutoringDB', JSON.stringify(dataArray));
+        }
+
+        function loadData() {
+            loadStudents();
+            loadStudentSelect();
+            loadSessions();
+            loadReport();
+        }
+
+        // Students
+        document.getElementById('studentForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const name = document.getElementById('studentName').value.trim();
+            const grade = parseInt(document.getElementById('studentGrade').value);
+            if (name && grade) {
+                db.run("INSERT INTO students (name, grade) VALUES (?, ?)", [name, grade]);
+                document.getElementById('studentForm').reset();
+                loadStudents();
+                loadStudentSelect();
+                loadReport();
+                saveToLocalStorage();
+            }
+        });
+
+        function loadStudents() {
+            const tbody = document.querySelector('#studentsTable');
+            tbody.innerHTML = '';
+            const res = db.exec("SELECT id, name, grade FROM students ORDER BY name");
+            if (res[0]) {
+                res[0].values.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${row[0]}</strong></td>
+                        <td>${row[1]}</td>
+                        <td><span class="badge bg-primary rounded-pill">Grade ${row[2]}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        function loadStudentSelect() {
+            const select = document.getElementById('sessionStudent');
+            select.innerHTML = '<option value="">Choose Student...</option>';
+            const res = db.exec("SELECT id, name FROM students ORDER BY name");
+            if (res[0]) {
+                res[0].values.forEach(row => {
+                    const opt = document.createElement('option');
+                    opt.value = row[0];
+                    opt.textContent = row[1];
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        // Sessions
+        document.getElementById('sessionForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const student_id = document.getElementById('sessionStudent').value;
+            const date = document.getElementById('sessionDate').value;
+            const duration = parseInt(document.getElementById('sessionDuration').value);
+            if (student_id && date && duration) {
+                db.run("INSERT INTO sessions (student_id, date, duration) VALUES (?, ?, ?)", [student_id, date, duration]);
+                document.getElementById('sessionForm').reset();
+                document.getElementById('sessionDate').valueAsDate = new Date();
+                loadSessions();
+                loadReport();
+                saveToLocalStorage();
+            }
+        });
+
+        function loadSessions() {
+            const tbody = document.querySelector('#sessionsTable');
+            tbody.innerHTML = '';
+            const stmt = db.prepare(`
+                SELECT s.id, st.name, s.date, s.duration, s.present, s.notes
+                FROM sessions s JOIN students st ON s.student_id = st.id
+                ORDER BY s.date DESC, s.id DESC
+            `);
+            while (stmt.step()) {
+                const row = stmt.getAsObject();
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${row.id}</strong></td>
+                    <td>${row.name}</td>
+                    <td>${row.date}</td>
+                    <td>${row.duration} min</td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input presentCheck" type="checkbox" data-id="${row.id}" ${row.present ? 'checked' : ''}>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control notesInput" data-id="${row.id}" value="${row.notes || ''}" placeholder="Add notes...">
+                    </td>
+                    <td>
+                        <button class="btn btn-success btn-sm saveBtn" data-id="${row.id}">
+                            <i class="bi bi-check-lg"></i> Save
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+            stmt.free();
+
+            document.querySelectorAll('.saveBtn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    const present = btn.closest('tr').querySelector('.presentCheck').checked ? 1 : 0;
+                    const notes = btn.closest('tr').querySelector('.notesInput').value.trim();
+                    db.run("UPDATE sessions SET present = ?, notes = ? WHERE id = ?", [present, notes, id]);
+                    loadReport();
+                    saveToLocalStorage();
+                });
+            });
+        }
+
+        // Report
+        function loadReport() {
+            const tbody = document.querySelector('#reportTable');
+            tbody.innerHTML = '';
+            const res = db.exec(`
+                SELECT st.name,
+                       COUNT(s.id) AS total,
+                       SUM(CASE WHEN s.present = 1 THEN 1 ELSE 0 END) AS attended
+                FROM students st LEFT JOIN sessions s ON st.id = s.student_id
+                GROUP BY st.id, st.name
+                ORDER BY st.name
+            `);
+            if (res[0]) {
+                res[0].values.forEach(row => {
+                    const total = row[1] || 0;
+                    const attended = row[2] || 0;
+                    const percent = total > 0 ? (attended / total * 100).toFixed(1) : '0.0';
+                    const tr = document.createElement('tr');
+                    const badgeClass = percent >= 90 ? 'bg-success' : percent >= 70 ? 'bg-warning' : 'bg-danger';
+                    tr.innerHTML = `
+                        <td><strong>${row[0]}</strong></td>
+                        <td>${total}</td>
+                        <td>${attended}</td>
+                        <td><span class="badge ${badgeClass} rounded-pill fs-6">${percent}%</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Export/Import/Clear
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const data = db.export();
+            const blob = new Blob([data], {type: 'application/octet-stream'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tutoring-backup.sqlite';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('importBtn').addEventListener('click', () => {
+            document.getElementById('importFile').click();
+        });
+
+        document.getElementById('importFile').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    db.close();
+                    db = new SQL.Database(data);
+                    loadData();
+                    saveToLocalStorage();
+                    alert('Backup imported successfully!');
+                } catch (err) {
+                    alert('Error importing: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            e.target.value = '';
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            if (confirm('Delete ALL data permanently? This cannot be undone.')) {
+                localStorage.removeItem('tutoringDB');
+                db.close();
+                db = new SQL.Database();
+                createTables();
+                loadData();
+                alert('All data cleared.');
+            }
+        });
+
+        // Default date today
+        document.getElementById('sessionDate').valueAsDate = new Date();
+
+        initDB();
+    </script>
+</body>
+</html>
