@@ -3,197 +3,328 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nataraj Atchula - Resume</title>
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Nataraj Atchula | IB Educator & Software Engineer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #0071e3;
+            --secondary: #86868b;
+            --bg: #f5f5f7;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text: #1d1d1f;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             margin: 0;
-            padding: 0;
-            background: #f5f5f7;
-            color: #1d1d1f;
+            background-color: var(--bg);
+            color: var(--text);
             line-height: 1.5;
+            overflow-x: hidden;
         }
+
+        /* --- Interactive Animations --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Layout --- */
         .container {
-            max-width: 980px;
-            margin: 60px auto;
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            animation: fadeIn 0.8s ease-out;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
         }
+
         header {
-            padding: 60px 40px 40px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
-            border-bottom: 1px solid #d2d2d7;
+            background: radial-gradient(circle at center, #ffffff 0%, #f5f5f7 100%);
         }
+
         header h1 {
-            font-size: 48px;
-            font-weight: 600;
+            font-size: 4rem;
             margin: 0;
+            letter-spacing: -0.04em;
+            background: linear-gradient(180deg, #1d1d1f 0%, #434343 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin: 10px 0 30px;
+        }
+
+        .contact-bar {
+            display: flex;
+            gap: 20px;
+            font-weight: 500;
+        }
+
+        .contact-bar a {
+            color: var(--primary);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--primary);
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+
+        .contact-bar a:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* --- Sections --- */
+        section {
+            margin: 100px 0;
+            padding: 40px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
             letter-spacing: -0.02em;
         }
-        header p {
-            font-size: 20px;
-            color: #6e6e73;
-            margin: 8px 0;
-        }
-        header a {
-            color: #0071e3;
-            text-decoration: none;
-        }
-        header a:hover {
-            text-decoration: underline;
-        }
-        .section {
-            padding: 40px;
-        }
-        .section h2 {
-            font-size: 28px;
-            font-weight: 600;
-            color: #1d1d1f;
-            margin-bottom: 20px;
-            letter-spacing: -0.01em;
-        }
-        .section p, .section ul {
-            font-size: 17px;
-            color: #515154;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-        .section ul {
-            list-style: none;
-            padding: 0;
-        }
-        .section ul li {
-            margin: 12px 0;
-            position: relative;
-            padding-left: 20px;
-        }
-        .section ul li::before {
-            content: '•';
-            color: #0071e3;
-            position: absolute;
-            left: 0;
-            font-size: 14px;
-        }
+
+        /* --- Experience Grid --- */
         .job {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e5e7;
         }
-        .job h3 {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1d1d1f;
-            margin: 0;
+
+        .job:last-child { border: none; }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
         }
-        .job .details {
-            font-size: 16px;
-            color: #6e6e73;
-            margin: 5px 0 10px;
+
+        .job-title { font-weight: 700; font-size: 1.25rem; }
+        .job-location { color: var(--primary); font-weight: 600; }
+        .job-date { color: var(--secondary); font-size: 0.9rem; }
+
+        /* --- Skills Tags --- */
+        .skill-group { margin-bottom: 25px; }
+        .skill-group h4 { margin-bottom: 10px; color: var(--secondary); }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .highlight {
-            background: #f5f5f7;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
+
+        .tag {
+            background: #eee;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: transform 0.2s, background 0.2s;
+            cursor: default;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .tag:hover {
+            transform: scale(1.05);
+            background: var(--primary);
+            color: white;
         }
+
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; color: #424245; }
+
         @media (max-width: 768px) {
-            .container {
-                margin: 20px;
-                border-radius: 12px;
-            }
-            header {
-                padding: 40px 20px 20px;
-            }
-            header h1 {
-                font-size: 36px;
-            }
-            header p {
-                font-size: 18px;
-            }
-            .section {
-                padding: 20px;
-            }
-            .section h2 {
-                font-size: 24px;
-            }
+            header h1 { font-size: 2.5rem; }
+            section { padding: 20px; }
+            .job-header { flex-direction: column; }
         }
     </style>
 </head>
 <body>
+
+    <header>
+        <h1 class="reveal">Nataraj Atchula</h1>
+        <p class="subtitle reveal">Engineering Educator | IB Computer Science & Design</p>
+        <div class="contact-bar reveal">
+            <a href="mailto:natturaju@gmail.com">Email Me</a>
+            <a href="tel:+917416883432">Call +91 741-6883432</a>
+        </div>
+        <p style="margin-top: 20px; color: var(--secondary);">Baku, Azerbaijan</p>
+    </header>
+
     <div class="container">
-        <header>
-            <h1>Nataraj Atchula</h1>
-            <p>IB Design & Computer Science Teacher</p>
-            <p>Location: Baku, Azerbaijan</p>
-            <p>Contact: +91 741-6883432 | <a href="mailto:natturaju@gmail.com">natturaju@gmail.com</a></p>
-        </header>
-
-        <div class="section">
+        
+        <section class="reveal">
             <h2>Professional Summary</h2>
-            <p>Passionate educator and IT professional dedicated to transforming learning experiences through technology and design. With a strong background in software engineering and instructional design, I aim to create engaging, student-centered learning environments that bridge theoretical knowledge with real-world applications. My expertise lies in curriculum development, project-based learning, and integrating emerging technologies like AI and VR into education to enhance student outcomes.</p>
-        </div>
+            <p>Engineering educator with a software engineering background, specializing in project-based learning and transdisciplinary technology integration[cite: 4, 5]. Experienced in developing IB-aligned curriculum for MYP Design and DP Computer Science, including hands-on 3D printing, laser engraving, coding, and immersive tech (VR/AR)[cite: 6]. Certified in AI/ML, with strong skills in CAD-inspired design, automation, and project management[cite: 8].</p>
+        </section>
 
-        <div class="section">
-            <h2>Core Competencies</h2>
-            <ul>
-                <li><strong>Technical Skills:</strong> Web Application Architecture, Open Source Libraries, Google Cloud, AWS, Firebase</li>
-                <li><strong>Programming Languages:</strong> HTML, JavaScript, CSS, Python, AngularJS, C++, PostgreSQL, MongoDB</li>
-                <li><strong>Design & Development:</strong> UI/UX Design, Photoshop, Illustrator</li>
-                <li><strong>Specializations:</strong> Relational & Non-relational Databases, AI & Machine Learning (Certified)</li>
-                <li><strong>Educational Expertise:</strong> Curriculum Development, IB & Project-Based Learning, Student Engagement Strategies, Technology Integration in Classrooms</li>
-            </ul>
-        </div>
+        <section class="reveal">
+            <h2>Technical Mastery</h2>
+            
+            <div class="skill-group">
+                <h4>Programming & Development</h4>
+                <div class="tag-container">
+                    <span class="tag">Python</span><span class="tag">Flask</span><span class="tag">JavaScript</span>
+                    <span class="tag">HTML/CSS</span><span class="tag">Node.js</span><span class="tag">C++</span>
+                    <span class="tag">AngularJS 1.0</span><span class="tag">Cocos2D</span><span class="tag">Assembly Language</span>
+                </div>
+            </div>
 
-        <div class="section">
-            <h2>Education</h2>
-            <p><strong>Bachelor’s in Information Technology</strong><br>St. Ann’s College of Engineering and Technology, Chirala | 2009 - 2013</p>
-        </div>
+            <div class="skill-group">
+                <h4>Cloud, Design & Prototyping</h4>
+                <div class="tag-container">
+                    <span class="tag">Unreal Engine (VR/AR)</span><span class="tag">Unity3D</span><span class="tag">Blender</span>
+                    <span class="tag">Tinkercad</span><span class="tag">Figma</span><span class="tag">Affinity</span>
+                    <span class="tag">AWS</span><span class="tag">Google Cloud</span><span class="tag">Firebase</span>
+                    <span class="tag">Raspberry Pi</span><span class="tag">3D Printing</span>
+                </div>
+            </div>
 
-        <div class="section">
-            <h2>Certifications</h2>
-            <p>Artificial Intelligence & Machine Learning – International Institute of Information Technology, Bangalore</p>
-        </div>
+            <div class="skill-group">
+                <h4>IB & Educational Tech</h4>
+                <div class="tag-container">
+                    <span class="tag">Inquiry-based learning</span><span class="tag">ATL skills</span>
+                    <span class="tag">DP supervision (EEs/IAs)</span><span class="tag">STEM club coordination</span>
+                </div>
+            </div>
+        </section>
 
-        <div class="section">
+        <section class="reveal">
             <h2>Professional Experience</h2>
-            <div class="job">
-                <h3>Dunya School - Baku, Azerbaijan</h3>
-                <p class="details">Design & Computer Science Teacher (Sept 2023 - Present)</p>
-                <ul>
-                    <li>Designed and implemented a project-based MYP Design curriculum aligned with IB standards.</li>
-                    <li>Delivered engaging IB DP Computer Science lessons, covering exam strategies and hands-on exercises.</li>
-                    <li>Mentored students in AI, programming, and digital design research projects.</li>
-                </ul>
-            </div>
-            <div class="job">
-                <h3>INNOJC PVT LTD - Hyderabad, India</h3>
-                <p class="details">Technical Lead (Aug 2022 - July 2023)</p>
-                <ul>
-                    <li>Led VR/AR application development using Unreal Engine for immersive learning.</li>
-                    <li>Designed interactive virtual classroom modules with educators.</li>
-                </ul>
-            </div>
-            <!-- Add more jobs as needed -->
-        </div>
 
-        <div class="section">
-            <h2>Key Highlights</h2>
-            <div class="highlight">
+            <div class="job">
+                <div class="job-header">
+                    <span class="job-title">IB Design and Computer Science Teacher</span>
+                    <span class="job-date">Sept 2023 - Present</span>
+                </div>
+                <div class="job-location">Dunya School, Baku, Azerbaijan</div>
                 <ul>
-                    <li>Experienced in IB curriculum development with a focus on student-centered learning.</li>
-                    <li>Expertise in AI, machine learning, and VR applications for education.</li>
-                    <li>Strong advocate for technology-driven education.</li>
-                    <li>Passionate about empowering students through innovative teaching strategies.</li>
+                    <li>Developed IB MYP Design curriculum focused on project-based learning and fabrication prototypes[cite: 32].</li>
+                    <li>Overseeing DP Computer Science initiatives, including Extended Essays (EEs) and Internal Assessments (IAs)[cite: 33].</li>
+                    <li>Led robotics-inspired projects and interdisciplinary STEM clubs[cite: 33, 38].</li>
                 </ul>
             </div>
-        </div>
+
+            <div class="job">
+                <div class="job-header">
+                    <span class="job-title">Technical Lead (VR/AR and Prototyping)</span>
+                    <span class="job-date">Aug 2022 - July 2023</span>
+                </div>
+                <div class="job-location">Innojc, Hyderabad, India</div>
+                <ul>
+                    <li>Coordinated VR/AR application development using Unreal Engine for educational subjects[cite: 54].</li>
+                    <li>Managed full project lifecycles from design to fabrication, emphasizing safety and materials[cite: 55, 56].</li>
+                </ul>
+            </div>
+
+            <div class="job">
+                <div class="job-header">
+                    <span class="job-title">Lab Assistant (Computer Science and Design)</span>
+                    <span class="job-date">April 2021 - March 2022</span>
+                </div>
+                <div class="job-location">St. Ann's College of Engineering and Technology, India</div>
+                <ul>
+                    <li>Taught full-stack development (Python, Flask, JS) and led student prototyping projects[cite: 59].</li>
+                    <li>Promoted collaborative learning environments through portfolio-based assessments[cite: 61].</li>
+                </ul>
+            </div>
+
+            <div class="job">
+                <div class="job-header">
+                    <span class="job-title">Product Catalyst</span>
+                    <span class="job-date">June 2018 - May 2019</span>
+                </div>
+                <div class="job-location">Varaha Innovation Labs Pvt Ltd, India</div>
+                <ul>
+                    <li>Led rapid prototyping of apps and managed payment integration projects[cite: 65].</li>
+                    <li>Interviewed candidates and coordinated cross-functional technical teams[cite: 65].</li>
+                </ul>
+            </div>
+
+            <div class="job">
+                <div class="job-header">
+                    <span class="job-title">Data Lead (Web Dev and UI/UX)</span>
+                    <span class="job-date">Jan 2015 - May 2018</span>
+                </div>
+                <div class="job-location">HOD Innovation Labs Pvt Ltd, India</div>
+                <ul>
+                    <li>Developed internal dashboards and handled end-to-end UI/UX design[cite: 69].</li>
+                    <li>Aligned digital designs with materials selection and finishing processes[cite: 69].</li>
+                </ul>
+            </div>
+
+            <div class="job">
+                <div class="job-header">
+                    <span class="job-title">Associate Software Engineer</span>
+                    <span class="job-date">April 2013 - Dec 2014</span>
+                </div>
+                <div class="job-location">GENYEDU, India</div>
+                <ul>
+                    <li>Developed educational games using Cocos2D and C++[cite: 77].</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="reveal">
+            <h2>Education & Certifications</h2>
+            <div class="job">
+                <div class="job-header">
+                    <span class="job-title">Bachelor's in Information Technology</span>
+                    <span class="job-date">2009 - 2013</span>
+                </div>
+                <div class="job-location">St. Ann's College of Engineering and Technology, Chirala [cite: 16]</div>
+            </div>
+
+            <div class="skill-group" style="margin-top: 30px;">
+                <h4>Professional Certifications</h4>
+                <ul>
+                    <li>AI and Machine Learning — IIIT Bangalore [cite: 11]</li>
+                    <li>Generative AI for Educators — Google [cite: 12]</li>
+                    <li>CCAAIBWS Professional Development [cite: 13]</li>
+                </ul>
+            </div>
+        </section>
+
     </div>
+
+    <script>
+        // Scroll Reveal Logic
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
 </body>
 </html>
