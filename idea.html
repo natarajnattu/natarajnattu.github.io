@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Satellite Illegal Fishing Detection</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#0b1622;font-family:system-ui,Segoe UI,Arial,sans-serif;color:#e6f0ff}
+  canvas{display:block}
+  .panel{position:absolute;background:rgba(10,20,35,.78);border:1px solid rgba(120,180,255,.25);border-radius:10px;padding:12px 14px;backdrop-filter:blur(4px)}
+  #info{top:12px;left:12px;max-width:320px;font-size:13px;line-height:1.5}
+  #info h1{font-size:16px;margin:0 0 6px;color:#8fd3ff}
+  #stats{top:12px;right:12px;font-size:13px;line-height:1.8;min-width:200px}
+  .legend div{margin-top:4px}
+  .legend span{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  #log{left:12px;right:12px;bottom:12px;height:150px;overflow-y:auto;font:12px/1.5 ui-monospace,Consolas,monospace}
+  .ok{color:#7fd6ff}.warn{color:#ffb84d}.alert{color:#ff6b6b;font-weight:bold}
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+
+<div id="info" class="panel">
+  <h1>Satellite-Based Illegal Fishing Detection</h1>
+  A coastal sensor node watches a restricted fishing zone. When a vessel stops and fishes inside it, the node sends the data up to a CubeSat (uplink). The satellite relays the alert down to a ground station (downlink).
+  <div class="legend">
+    <div><span style="background:#ffb84d"></span>Restricted fishing zone</div>
+    <div><span style="background:#7fd6ff"></span>Uplink: sensor → satellite</div>
+    <div><span style="background:#ffb84d"></span>Downlink: satellite → ground station</div>
+    <div><span style="background:#ff6b6b"></span>Illegal fishing alert</div>
+  </div>
+</div>
+
+<div id="stats" class="panel">
+  Vessels tracked: <b id="vCount">0</b><br>
+  Fishing events: <b id="fCount">0</b><br>
+  Uplinks received: <b id="uCount">0</b><br>
+  Alerts downlinked: <b id="dCount">0</b>
+</div>
+
+<div id="log" class="panel"></div>
+
+<script type="module">
+import * as THREE from 'three';
+
+/* ---------- Renderer, scene, camera ---------- */
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x9cc9ea);
+scene.fog = new THREE.Fog(0x9cc9ea, 70, 150);
+
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 400);
+camera.position.set(0, 13, 36);
+camera.lookAt(0, 5, -6);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x3b5f7a, 1.1));
+const sun = new THREE.DirectionalLight(0xffffff, 1.1);
+sun.position.set(-15, 25, 15);
+scene.add(sun);
+
+/* ---------- Helpers ---------- */
+const mat = (color, extra = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.6, metalness: 0.1, ...extra });
+const mk = (geom, color, extra) => new THREE.Mesh(geom, mat(color, extra));
+const logEl = document.getElementById('log');
+const stats = { vessels: 0, fishing: 0, up: 0, down: 0 };
+
+function log(msg, cls = 'ok') {
+  const d = document.createElement('div');
+  d.className = cls;
+  d.textContent = `[${new Date().toLocaleTimeString('en-GB')}] ${msg}`;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function updateStats() {
+  document.getElementById('vCount').textContent = stats.vessels;
+  document.getElementById('fCount').textContent = stats.fishing;
+  document.getElementById('uCount').textContent = stats.up;
+  document.getElementById('dCount').textContent = stats.down;
+}
+function makeLabel(text, parent = scene, pos = new THREE.Vector3()) {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 128;
+  const g = c.getContext('2d');
+  g.fillStyle = 'rgba(10,20,35,0.8)';
+  g.fillRect(0, 0, 512, 128);
+  g.fillStyle = '#ffffff';
+  g.font = 'bold 34px sans-serif';
+  g.textAlign = 'center';
+  g.fillText(text, 256, 76);
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), transparent: true }));
+  sprite.scale.set(7, 1.75, 1);
+  sprite.position.copy(pos);
+  parent.add(sprite);
+  return sprite;
+}
+
+/* ---------- Scenery ---------- */
+// Sea
+const sea = mk(new THREE.PlaneGeometry(500, 300), 0x1d6a94, { roughness: 0.3 });
+sea.rotation.x = -Math.PI / 2;
+sea.position.set(0, -0.2, -150);
+scene.add(sea);
+
+// Beach
+const sand = mk(new THREE.BoxGeometry(500, 1, 70), 0xd8b67a);
+sand.position.set(0, -0.5, 35);
+scene.add(sand);
+
+// Grass patch
+const grass = mk(new THREE.BoxGeometry(60, 1.2, 40), 0x6f8f4a);
+grass.position.set(-45, 0.1, 20);
+scene.add(grass);
+
+// Distant city skyline
+for (let i = 0; i < 40; i++) {
+  const h = 4 + Math.random() * 14;
+  const b = mk(new THREE.BoxGeometry(2 + Math.random() * 3, h, 2 + Math.random() * 2), 0x6c7d8f);
+  b.position.set(-90 + i * 4.5, h / 2, -95 - Math.random() * 10);
+  scene.add(b);
+}
+
+// Foam streaks
+const foam = [];
+for (let i = 0; i < 14; i++) {
+  const m = mk(new THREE.BoxGeometry(6, 0.02, 0.25), 0xffffff, { transparent: true, opacity: 0.6 });
+  m.position.set(-60 + Math.random() * 120, -0.1, -2 - Math.random() * 30);
+  scene.add(m);
+  foam.push({ m, s: 0.5 + Math.random() });
+}
+
+/* ---------- Coastal sensor node ---------- */
+const SENSOR_BASE = new THREE.Vector3(-12, 0, 6);
+const SENSOR_TOP = new THREE.Vector3(-12, 6.6, 6);
+const sensor = new THREE.Group();
+sensor.position.copy(SENSOR_BASE);
+scene.add(sensor);
+
+const pole = mk(new THREE.CylinderGeometry(0.12, 0.12, 6.5, 8), 0xdddddd);
+pole.position.y = 3.25;
+sensor.add(pole);
+
+const enclosure = mk(new THREE.BoxGeometry(1.4, 1.8, 0.9), 0xf2f2f2);
+enclosure.position.set(0.8, 1.5, 0);
+sensor.add(enclosure);
+
+const panel = mk(new THREE.BoxGeometry(2.4, 0.08, 1.4), 0x1a2a5a, { metalness: 0.5 });
+panel.position.set(0, 6.9, 0);
+panel.rotation.x = -0.5;
+sensor.add(panel);
+
+const camBox = mk(new THREE.BoxGeometry(0.5, 0.4, 0.5), 0x333333);
+camBox.position.set(-0.6, 4.6, 0.5);
+sensor.add(camBox);
+
+const beacon = mk(new THREE.SphereGeometry(0.28, 16, 12), 0x3399ff, { emissive: 0x3399ff, emissiveIntensity: 0.4 });
+beacon.position.set(0, 5.6, 0.2);
+sensor.add(beacon);
+
+makeLabel('Coastal Sensor Node', scene, new THREE.Vector3(-12, 9.6, 6));
+
+/* ---------- Ground station ---------- */
+const STATION_TOP = new THREE.Vector3(14, 5.6, 4);
+const station = new THREE.Group();
+station.position.set(14, 0, 4);
+scene.add(station);
+
+const bldg = mk(new THREE.BoxGeometry(6, 2.6, 4), 0xe9edf2);
+bldg.position.set(0, 1.3, 0);
+station.add(bldg);
+
+const stationMast = mk(new THREE.CylinderGeometry(0.1, 0.1, 2, 8), 0xcccccc);
+stationMast.position.set(0, 3.6, 0);
+station.add(stationMast);
+
+const dish = mk(new THREE.SphereGeometry(2, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), 0xf5f5f5, { side: THREE.DoubleSide });
+dish.position.set(0, 4.6, 0);
+dish.rotation.x = -0.5;
+station.add(dish);
+
+makeLabel('Ground Station', scene, new THREE.Vector3(14, 9, 4));
+
+/* ---------- CubeSat ---------- */
+const sat = new THREE.Group();
+scene.add(sat);
+sat.add(mk(new THREE.BoxGeometry(1, 1, 1.4), 0xc9ced6));
+const wingL = mk(new THREE.BoxGeometry(3, 0.05, 1), 0x2b4c8c, { metalness: 0.6 });
+wingL.position.x = -2.2;
+sat.add(wingL);
+const wingR = wingL.clone();
+wingR.position.x = 2.2;
+sat.add(wingR);
+const satAnt = mk(new THREE.CylinderGeometry(0.03, 0.03, 1.2, 6), 0xdddddd);
+satAnt.position.y = 1.1;
+sat.add(satAnt);
+makeLabel('CubeSat · Azercosmos', sat, new THREE.Vector3(0, 2.4, 0));
+
+/* ---------- Links (dim, flash when transmitting) ---------- */
+const linkUp = new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints([SENSOR_TOP, sat.position]),
+  new THREE.LineBasicMaterial({ color: 0x7fd6ff, transparent: true, opacity: 0.15 })
+);
+const linkDown = new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints([sat.position, STATION_TOP]),
+  new THREE.LineBasicMaterial({ color: 0xffb84d, transparent: true, opacity: 0.15 })
+);
+scene.add(linkUp, linkDown);
+let flashUp = 0, flashDown = 0;
+
+/* ---------- Restricted zone ---------- */
+const zone = new THREE.Mesh(
+  new THREE.PlaneGeometry(10, 8),
+  new THREE.MeshBasicMaterial({ color: 0xffb84d, transparent: true, opacity: 0.22, side: THREE.DoubleSide })
+);
+zone.rotation.x = -Math.PI / 2;
+zone.position.set(1, -0.15, -10.5);
+scene.add(zone);
+const zoneEdges = new THREE.LineSegments(
+  new THREE.EdgesGeometry(zone.geometry),
+  new THREE.LineBasicMaterial({ color: 0xffb84d })
+);
+zone.add(zoneEdges);
+
+/* ---------- Boats ---------- */
+function makeBoat(hullColor) {
+  const g = new THREE.Group();
+  const hull = mk(new THREE.BoxGeometry(3.2, 0.7, 1.4), hullColor);
+  g.add(hull);
+  const cabin = mk(new THREE.BoxGeometry(1.2, 0.9, 1), 0xffffff);
+  cabin.position.set(-0.4, 0.8, 0);
+  g.add(cabin);
+  const mast = mk(new THREE.CylinderGeometry(0.05, 0.05, 2.2, 6), 0x444444);
+  mast.position.set(0.6, 1.5, 0);
+  g.add(mast);
+  const rodGeo = new THREE.BufferGeometry().setFromPoints([
+    new THREE.Vector3(-1.8, 0.2, 0), new THREE.Vector3(-3.4, 2.4, 0)
+  ]);
+  const rod = new THREE.Line(rodGeo, new THREE.LineBasicMaterial({ color: 0xffffff }));
+  rod.visible = false;
+  g.add(rod);
+  g.userData = { hull, rod };
+  scene.add(g);
+  return g;
+}
+
+const boats = [
+  { id: 'MMSI 423-118', x: -34, z: -9.5, speed: 2.4, color: 0x2d7dd2, state: 'sail', timer: 0, fished: false, phase: 0 },
+  { id: 'MMSI 423-207', x: -18, z: -12.5, speed: 2.0, color: 0xeeeeee, state: 'sail', timer: 0, fished: false, phase: 1.3 },
+  { id: 'MMSI 423-341', x: 40, z: -22, speed: -2.8, color: 0x2d7dd2, state: 'sail', timer: 0, fished: false, phase: 2.1 },
+  { id: 'MMSI 423-552', x: -40, z: -28, speed: 1.8, color: 0xeeeeee, state: 'sail', timer: 0, fished: false, phase: 3.0 },
+];
+boats.forEach(b => { b.g = makeBoat(b.color); });
+stats.vessels = boats.length;
+
+/* ---------- Effects ---------- */
+const packets = [];
+const rings = [];
+
+function sendPacket(from, to, color, dur, onArrive) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(0.22, 12, 8), new THREE.MeshBasicMaterial({ color }));
+  scene.add(m);
+  packets.push({ from, to, m, t: 0, dur, onArrive });
+}
+
+function spawnRing(pos, color) {
+  const m = new THREE.Mesh(
+    new THREE.RingGeometry(0.3, 0.5, 48),
+    new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, side: THREE.DoubleSide })
+  );
+  m.rotation.x = -Math.PI / 2;
+  m.position.copy(pos);
+  scene.add(m);
+  rings.push({ m, life: 1.5, color });
+}
+
+let beaconGlow = 0;
+
+function startFishing(b) {
+  b.state = 'fish';
+  b.timer = 8;
+  b.fished = true;
+  b.g.userData.rod.visible = true;
+  b.g.userData.hull.material.color.set(b.color);
+  stats.fishing++;
+  updateStats();
+
+  log(`Vessel ${b.id} stopped inside restricted zone. Fishing gear deployed.`, 'warn');
+  beaconGlow = 1;
+  spawnRing(new THREE.Vector3(SENSOR_BASE.x, 0.1, SENSOR_BASE.z), 0x3399ff);
+
+  // Uplink: sensor → satellite
+  flashUp = 1.8;
+  sendPacket(
+    () => SENSOR_TOP,
+    () => sat.position.clone(),
+    0x7fd6ff, 1.8,
+    () => {
+      stats.up++;
+      updateStats();
+      log(`CubeSat received sensor data (uplink) for ${b.id}.`, 'ok');
+
+      // Downlink: satellite → ground station
+      flashDown = 2.2;
+      sendPacket(
+        () => sat.position.clone(),
+        () => STATION_TOP,
+        0xffb84d, 2.2,
+        () => {
+          stats.down++;
+          updateStats();
+          b.g.userData.hull.material.color.set(0xff4d4d);
+          spawnRing(new THREE.Vector3(14, 0.1, 4), 0xff6b6b);
+          log(`ALERT: Ground station received illegal fishing report for ${b.id} in zone.`, 'alert');
+        }
+      );
+    }
+  );
+}
+
+/* ---------- Animation loop ---------- */
+let last = performance.now() / 1000;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = performance.now() / 1000;
+  const dt = Math.min(t - last, 0.05);
+  last = t;
+
+  // Satellite orbit path across the sky
+  sat.position.set(Math.sin(t * 0.12) * 16, 15 + Math.sin(t * 0.5) * 0.3, -6);
+  sat.rotation.z = Math.sin(t * 0.3) * 0.05;
+
+  // Links
+  linkUp.geometry.setFromPoints([SENSOR_TOP, sat.position]);
+  linkDown.geometry.setFromPoints([sat.position, STATION_TOP]);
+  flashUp = Math.max(0, flashUp - dt);
+  flashDown = Math.max(0, flashDown - dt);
+  linkUp.material.opacity = 0.15 + (flashUp > 0 ? 0.85 : 0);
+  linkDown.material.opacity = 0.15 + (flashDown > 0 ? 0.85 : 0);
+
+  // Beacon glow
+  beaconGlow = Math.max(0, beaconGlow - dt * 0.8);
+  beacon.material.emissiveIntensity = 0.4 + beaconGlow * 2.5;
+
+  // Boats
+  for (const b of boats) {
+    if (b.state === 'sail') {
+      b.x += b.speed * dt;
+      if (!b.fished && b.x > -4 && b.x < 6 && b.z > -14.5 && b.z < -6.5) startFishing(b);
+    } else {
+      b.timer -= dt;
+      if (b.timer <= 0) {
+        b.state = 'sail';
+        b.g.userData.rod.visible = false;
+      }
+    }
+    if (b.x < -55) { b.x = 55; b.fished = false; }
+    if (b.x > 55) { b.x = -55; b.fished = false; }
+    b.g.position.set(b.x, Math.sin(t * 1.5 + b.phase) * 0.12, b.z);
+    b.g.rotation.z = Math.sin(t * 1.5 + b.phase) * 0.04;
+  }
+
+  // Foam drift
+  for (const f of foam) {
+    f.m.position.x += f.s * dt;
+    if (f.m.position.x > 65) f.m.position.x = -65;
+  }
+
+  // Packets
+  for (let i = packets.length - 1; i >= 0; i--) {
+    const p = packets[i];
+    p.t += dt / p.dur;
+    if (p.t >= 1) {
+      scene.remove(p.m);
+      packets.splice(i, 1);
+      p.onArrive();
+    } else {
+      p.m.position.lerpVectors(p.from(), p.to(), p.t);
+      p.m.position.y += Math.sin(p.t * Math.PI) * 0.6;
+    }
+  }
+
+  // Expanding rings
+  for (let i = rings.length - 1; i >= 0; i--) {
+    const r = rings[i];
+    r.life -= dt;
+    if (r.life <= 0) {
+      scene.remove(r.m);
+      rings.splice(i, 1);
+      continue;
+    }
+    const k = 1 - r.life / 1.5;
+    r.m.scale.setScalar(1 + k * 20);
+    r.m.material.opacity = 0.9 * (1 - k);
+  }
+
+  renderer.render(scene, camera);
+}
+
+/* ---------- Resize ---------- */
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+/* ---------- Start ---------- */
+log('Sensor node online. Monitoring restricted fishing zone.', 'ok');
+log('CubeSat link (Azercosmos) standing by.', 'ok');
+updateStats();
+animate();
+</script>
+</body>
+</html>
